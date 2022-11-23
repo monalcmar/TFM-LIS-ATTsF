@@ -3,9 +3,9 @@
     "version": "2.2.11",
     "width": 3000,
     "height": 3000,
-    "scrollTop": -447.1999999999971,
-    "scrollLeft": -901.600000000002,
-    "zoomLevel": 0.8,
+    "scrollTop": -463.19999999999766,
+    "scrollLeft": -472.000000000001,
+    "zoomLevel": 0.9,
     "show": {
       "tableComment": true,
       "columnComment": true,
@@ -304,7 +304,7 @@
           "active": false,
           "left": 910.3778,
           "top": 768.2,
-          "zIndex": 32,
+          "zIndex": 16,
           "widthName": 60,
           "widthComment": 60
         },
@@ -543,7 +543,7 @@
           "active": false,
           "left": 1227.4481,
           "top": 387.6035,
-          "zIndex": 30,
+          "zIndex": 15,
           "widthName": 60,
           "widthComment": 60
         },
@@ -858,9 +858,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 235.6,
-          "top": 1368.8,
-          "zIndex": 10,
+          "left": 135.1549,
+          "top": 1336.8001,
+          "zIndex": 17,
           "widthName": 64.13720703125,
           "widthComment": 60
         },
@@ -984,7 +984,7 @@
           "active": false,
           "left": 343.4441,
           "top": 304.3999,
-          "zIndex": 16,
+          "zIndex": 14,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1129,9 +1129,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 349.0893,
-          "top": 832.0219,
-          "zIndex": 7,
+          "left": 411.3113,
+          "top": 864.022,
+          "zIndex": 18,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1216,7 +1216,7 @@
           "active": false,
           "left": 594.7335,
           "top": 504.0218,
-          "zIndex": 15,
+          "zIndex": 13,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1448,7 +1448,7 @@
           "active": false,
           "left": 1427.3781,
           "top": 197.1333,
-          "zIndex": 13,
+          "zIndex": 12,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1557,8 +1557,8 @@
           "columnIds": [
             "b67b4855-417f-4426-83ca-e8d5ebc2377c"
           ],
-          "x": 448.7572265625,
-          "y": 1368.8,
+          "x": 348.3121265625,
+          "y": 1336.8001,
           "direction": "top"
         },
         "end": {
@@ -1566,9 +1566,9 @@
           "columnIds": [
             "50a9c4b6-21b5-45ef-9196-55176932fb57"
           ],
-          "x": 586.8424,
-          "y": 1206.629,
-          "direction": "bottom"
+          "x": 413.3424,
+          "y": 1151.629,
+          "direction": "left"
         },
         "constraintName": "fk_mecánicos_to_",
         "visible": true,
@@ -1592,8 +1592,8 @@
           "columnIds": [
             "48b08215-5d84-472e-ae4a-0204e547f590"
           ],
-          "x": 522.5893,
-          "y": 832.0219,
+          "x": 584.8113000000001,
+          "y": 864.022,
           "direction": "top"
         },
         "constraintName": "fk_tipo_avería_to_",
@@ -1843,18 +1843,18 @@
           "columnIds": [
             "21150df9-5c9a-4fc9-b008-5623e7a527aa"
           ],
-          "x": 478.6224,
-          "y": 1702.45,
-          "direction": "left"
+          "x": 652.1224,
+          "y": 1637.2,
+          "direction": "top"
         },
         "end": {
           "tableId": "90528f0c-1dc1-48df-a6f8-e2abb6680ccf",
           "columnIds": [
             "4ea0cc0b-b54c-4c77-a0fd-fde545b06cce"
           ],
-          "x": 448.7572265625,
-          "y": 1519.8,
-          "direction": "bottom"
+          "x": 561.469353125,
+          "y": 1412.3001,
+          "direction": "right"
         },
         "constraintName": "fk_taller_mec_to_mecánicos",
         "visible": true,
@@ -1904,8 +1904,8 @@
           "columnIds": [
             "2276b4c0-1ded-4443-a0c8-b702509cdd56"
           ],
-          "x": 696.0893,
-          "y": 897.2719,
+          "x": 758.3113000000001,
+          "y": 929.272,
           "direction": "right"
         },
         "constraintName": "fk_ots_to_",
