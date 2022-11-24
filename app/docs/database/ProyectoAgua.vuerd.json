@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 3000,
     "height": 3000,
-    "scrollTop": -463.19999999999766,
-    "scrollLeft": -472.000000000001,
+    "scrollTop": -380.0000000000018,
+    "scrollLeft": -946.4000000000004,
     "zoomLevel": 0.9,
     "show": {
       "tableComment": true,
@@ -304,7 +304,7 @@
           "active": false,
           "left": 910.3778,
           "top": 768.2,
-          "zIndex": 16,
+          "zIndex": 14,
           "widthName": 60,
           "widthComment": 60
         },
@@ -364,9 +364,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 1386.5327,
-          "top": 1368.9108,
-          "zIndex": 9,
+          "left": 1434.5331,
+          "top": 1419.5774,
+          "zIndex": 17,
           "widthName": 60,
           "widthComment": 60
         },
@@ -543,7 +543,7 @@
           "active": false,
           "left": 1227.4481,
           "top": 387.6035,
-          "zIndex": 15,
+          "zIndex": 13,
           "widthName": 60,
           "widthComment": 60
         },
@@ -667,7 +667,7 @@
           "active": false,
           "left": 1480.575,
           "top": 1164.4906,
-          "zIndex": 8,
+          "zIndex": 7,
           "widthName": 60,
           "widthComment": 60
         },
@@ -860,7 +860,7 @@
           "active": false,
           "left": 135.1549,
           "top": 1336.8001,
-          "zIndex": 17,
+          "zIndex": 15,
           "widthName": 64.13720703125,
           "widthComment": 60
         },
@@ -984,7 +984,7 @@
           "active": false,
           "left": 343.4441,
           "top": 304.3999,
-          "zIndex": 14,
+          "zIndex": 12,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1044,9 +1044,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 413.3424,
-          "top": 1096.629,
-          "zIndex": 6,
+          "left": 508.4533,
+          "top": 1107.2957,
+          "zIndex": 18,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1131,7 +1131,7 @@
           "active": false,
           "left": 411.3113,
           "top": 864.022,
-          "zIndex": 18,
+          "zIndex": 16,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1216,7 +1216,7 @@
           "active": false,
           "left": 594.7335,
           "top": 504.0218,
-          "zIndex": 13,
+          "zIndex": 11,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1448,7 +1448,7 @@
           "active": false,
           "left": 1427.3781,
           "top": 197.1333,
-          "zIndex": 12,
+          "zIndex": 10,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1533,7 +1533,7 @@
           "active": false,
           "left": 478.6224,
           "top": 1637.2,
-          "zIndex": 11,
+          "zIndex": 9,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1557,18 +1557,18 @@
           "columnIds": [
             "b67b4855-417f-4426-83ca-e8d5ebc2377c"
           ],
-          "x": 348.3121265625,
-          "y": 1336.8001,
-          "direction": "top"
+          "x": 561.469353125,
+          "y": 1374.5501,
+          "direction": "right"
         },
         "end": {
           "tableId": "b1592a35-ac92-49c2-af88-9d7c2a93ab66",
           "columnIds": [
             "50a9c4b6-21b5-45ef-9196-55176932fb57"
           ],
-          "x": 413.3424,
-          "y": 1151.629,
-          "direction": "left"
+          "x": 681.9533,
+          "y": 1217.2957,
+          "direction": "bottom"
         },
         "constraintName": "fk_mecánicos_to_",
         "visible": true,
@@ -1635,8 +1635,8 @@
           "columnIds": [
             "fcd08ba6-1a6c-40fa-8174-9220a56d14bb"
           ],
-          "x": 1386.5327,
-          "y": 1423.9108,
+          "x": 1434.5331,
+          "y": 1474.5774,
           "direction": "left"
         },
         "end": {
@@ -1853,7 +1853,7 @@
             "4ea0cc0b-b54c-4c77-a0fd-fde545b06cce"
           ],
           "x": 561.469353125,
-          "y": 1412.3001,
+          "y": 1450.0501,
           "direction": "right"
         },
         "constraintName": "fk_taller_mec_to_mecánicos",
@@ -1878,8 +1878,8 @@
           "columnIds": [
             "a65b042b-b6dd-4ec5-b3b6-b67f29654a0b"
           ],
-          "x": 760.3424,
-          "y": 1151.629,
+          "x": 855.4533,
+          "y": 1162.2957,
           "direction": "right"
         },
         "constraintName": "fk_ots_to_",
