@@ -148,7 +148,7 @@ cython_debug/
 *.pkl
 
 #Filtrar notebooks
-*.ipynb
+# *.ipynb
 
 #Filtrar parquet
 *.pq
