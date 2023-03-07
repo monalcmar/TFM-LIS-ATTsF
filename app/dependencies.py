@@ -16,3 +16,4 @@ with open(Path(__file__).parent / 'config' / 'config.yml') as config_file:
     config = yaml.load(config_file, Loader=yaml.FullLoader)
 
 logger = logger()
+# -
