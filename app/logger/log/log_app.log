@@ -53,3 +53,32 @@ Traceback (most recent call last):
   File "/home/sergioretuerto/Documents/Programs/Python/venv/env/lib/python3.10/site-packages/pandas/io/common.py", line 865, in get_handle
     handle = open(handle, ioargs.mode)
 FileNotFoundError: [Errno 2] No such file or directory: '/home/sergioretuerto/Documents/Projects/attsf/attsf-ordenes-de-trabajo/app/data/raw/BASE DE DATO 2022 PRUEBA.xlsx'
+2023-03-13 12:26:31,554 - INFO - Iniciamos el proceso
+2023-03-13 12:26:31,554 - ERROR - Fichero no encontrado
+2023-03-13 12:31:01,861 - INFO - Iniciamos el proceso
+2023-03-13 12:31:01,863 - ERROR - Fichero no encontrado. <class 'FileNotFoundError'>
+2023-03-13 12:31:16,562 - INFO - Iniciamos el proceso
+2023-03-13 12:31:16,563 - ERROR - Fichero no encontrado. [Errno 2] No such file or directory: '/home/sergioretuerto/Documents/Projects/attsf/attsf-ordenes-de-trabajo/app/data/raw/BASE DE DATO 2022 PRUEBA.xlsx'
+2023-03-13 12:37:53,863 - INFO - Iniciamos el proceso
+2023-03-13 12:37:53,864 - ERROR - Fichero [Errno 2] No such file or directory: '/home/sergioretuerto/Documents/Projects/attsf/attsf-ordenes-de-trabajo/app/data/raw/BASE DE DATO 2022 PRUEBA.xlsx' no encontrado
+2023-03-13 12:40:02,060 - INFO - Iniciamos el proceso
+2023-03-13 12:40:02,060 - ERROR - Fichero no encontrado: [Errno 2] No such file or directory: '/home/sergioretuerto/Documents/Projects/attsf/attsf-ordenes-de-trabajo/app/data/raw/BASE DE DATO 2022 PRUEBA.xlsx'
+2023-03-13 12:40:45,320 - INFO - Iniciamos el proceso
+2023-03-13 12:40:45,322 - ERROR - Fichero no encontrado: [Errno 2] No such file or directory: '/home/sergioretuerto/Documents/Projects/attsf/attsf-ordenes-de-trabajo/app/data/raw/BASE DE DATO 2022 PRUEBA.xlsx'
+2023-03-13 12:40:45,322 - INFO - Generando otro df porque el otro no se encuentra
+2023-03-13 12:40:58,438 - INFO - Iniciamos el proceso
+2023-03-13 12:40:58,439 - ERROR - Fichero no encontrado: [Errno 2] No such file or directory: '/home/sergioretuerto/Documents/Projects/attsf/attsf-ordenes-de-trabajo/app/data/raw/BASE DE DATO 2022 PRUEBA.xlsx'
+2023-03-13 12:40:58,439 - INFO - Generando otro df porque el otro no se encuentra
+2023-03-13 12:40:58,439 - ERROR - DataFrame.__init__() got an unexpected keyword argument 'columnas'
+2023-03-13 12:41:33,506 - INFO - Iniciamos el proceso
+2023-03-13 12:41:33,507 - ERROR - Fichero no encontrado: [Errno 2] No such file or directory: '/home/sergioretuerto/Documents/Projects/attsf/attsf-ordenes-de-trabajo/app/data/raw/BASE DE DATO 2022 PRUEBA.xlsx'
+2023-03-13 12:41:33,508 - INFO - Generando otro df porque el otro no se encuentra
+2023-03-13 12:41:33,508 - ERROR - DataFrame.__init__() got an unexpected keyword argument 'columnas'
+2023-03-13 12:42:29,021 - INFO - Iniciamos el proceso
+2023-03-13 12:42:29,021 - ERROR - Fichero no encontrado: [Errno 2] No such file or directory: '/home/sergioretuerto/Documents/Projects/attsf/attsf-ordenes-de-trabajo/app/data/raw/BASE DE DATO 2022 PRUEBA.xlsx'
+2023-03-13 12:42:29,021 - INFO - Generando otro df porque el otro no se encuentra
+2023-03-13 12:42:29,021 - ERROR - Hay un error en los parámetros de lectura: DataFrame.__init__() got an unexpected keyword argument 'columnas'
+2023-03-13 12:42:48,722 - INFO - Iniciamos el proceso
+2023-03-13 12:42:48,724 - ERROR - Fichero no encontrado: [Errno 2] No such file or directory: '/home/sergioretuerto/Documents/Projects/attsf/attsf-ordenes-de-trabajo/app/data/raw/BASE DE DATO 2022 PRUEBA.xlsx'
+2023-03-13 12:42:48,724 - INFO - Generando otro df porque el otro no se encuentra
+2023-03-13 12:42:48,724 - ERROR - Hay un error en los parámetros de lectura: DataFrame.__init__() got an unexpected keyword argument 'columnas'
