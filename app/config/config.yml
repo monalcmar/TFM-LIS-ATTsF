@@ -1,10 +1,7 @@
 LOCAL:
     database:
-        host: 'db_host'
-        db: 'db_name'
-
-    server:
-        ip: 'server_ip'
+        host: '3.69.128.37'
+        db: 'postgres'
 
 DEV:
     database:

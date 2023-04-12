@@ -82,3 +82,5 @@ FileNotFoundError: [Errno 2] No such file or directory: '/home/sergioretuerto/Do
 2023-03-13 12:42:48,724 - ERROR - Fichero no encontrado: [Errno 2] No such file or directory: '/home/sergioretuerto/Documents/Projects/attsf/attsf-ordenes-de-trabajo/app/data/raw/BASE DE DATO 2022 PRUEBA.xlsx'
 2023-03-13 12:42:48,724 - INFO - Generando otro df porque el otro no se encuentra
 2023-03-13 12:42:48,724 - ERROR - Hay un error en los parámetros de lectura: DataFrame.__init__() got an unexpected keyword argument 'columnas'
+2023-04-12 11:47:38,201 - INFO - Inicio ETL Distribucion
+2023-04-12 11:47:38,201 - INFO - Inicio ETL Distribucion
