@@ -5,10 +5,10 @@ from sqlalchemy import MetaData
 import dependencies as dp
 
 
-def engine_create(db_type, db_name, user, password, host, port):
+def engine_create(db_type, db_name, user, password, host, port, schema=None):
     if db_type == 'postgresql':
         engine = create_engine(
-            f'postgresql://{user}:{password}@{host}:{port}/{db_name}'
+            f'postgresql://{user}:{password}@{host}:{port}/{db_name}', connect_args=schema
         )
     elif db_type == 'mssql':
         engine = create_engine(
@@ -30,6 +30,7 @@ engine = engine_create(
     user=os.environ.get('DATABASE_USER'),
     password=os.environ.get('DATABASE_PASSWORD'),
     host=dp.config[dp.enviroment]['database']['host'],
-    port=5432
+    port=5432,
+    schema={'options': '-csearch_path=attsf'}
 )
 conn = engine.connect()
