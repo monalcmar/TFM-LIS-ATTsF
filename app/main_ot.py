@@ -53,5 +53,4 @@ print(df_tipo_ot)
 # # Convertir resultados ORM a DataFrame
 # df = pd.DataFrame([vars(r) for r in resultado_orm])
 
-
 logger.info('Fin ETL Distribucion')
