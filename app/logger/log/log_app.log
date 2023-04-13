@@ -84,3 +84,23 @@ FileNotFoundError: [Errno 2] No such file or directory: '/home/sergioretuerto/Do
 2023-03-13 12:42:48,724 - ERROR - Hay un error en los parámetros de lectura: DataFrame.__init__() got an unexpected keyword argument 'columnas'
 2023-04-12 11:47:38,201 - INFO - Inicio ETL Distribucion
 2023-04-12 11:47:38,201 - INFO - Inicio ETL Distribucion
+2023-04-13 09:17:23,344 - INFO - Inicio ETL Distribucion
+2023-04-13 09:17:23,344 - INFO - Inicio ETL Distribucion
+2023-04-13 09:27:25,414 - INFO - Inicio ETL Distribucion
+2023-04-13 09:27:25,414 - INFO - Inicio ETL Distribucion
+2023-04-13 09:43:35,505 - INFO - Inicio ETL Distribucion
+2023-04-13 09:43:35,505 - INFO - Inicio ETL Distribucion
+2023-04-13 09:47:04,725 - INFO - Inicio ETL Distribucion
+2023-04-13 09:47:04,725 - INFO - Inicio ETL Distribucion
+2023-04-13 09:51:30,195 - INFO - Inicio ETL Distribucion
+2023-04-13 09:51:30,195 - INFO - Inicio ETL Distribucion
+2023-04-13 09:52:07,332 - INFO - Inicio ETL Distribucion
+2023-04-13 09:52:07,332 - INFO - Inicio ETL Distribucion
+2023-04-13 09:59:26,464 - INFO - Inicio ETL Distribucion
+2023-04-13 09:59:26,464 - INFO - Inicio ETL Distribucion
+2023-04-13 09:59:47,562 - INFO - Inicio ETL Distribucion
+2023-04-13 09:59:47,562 - INFO - Inicio ETL Distribucion
+2023-04-13 10:00:44,021 - INFO - Inicio ETL Distribucion
+2023-04-13 10:00:44,021 - INFO - Inicio ETL Distribucion
+2023-04-13 10:11:44,324 - INFO - Inicio ETL Distribucion
+2023-04-13 10:11:44,324 - INFO - Inicio ETL Distribucion
