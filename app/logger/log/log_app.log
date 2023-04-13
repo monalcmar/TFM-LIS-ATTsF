@@ -84,3 +84,27 @@ FileNotFoundError: [Errno 2] No such file or directory: '/home/sergioretuerto/Do
 2023-03-13 12:42:48,724 - ERROR - Hay un error en los parámetros de lectura: DataFrame.__init__() got an unexpected keyword argument 'columnas'
 2023-04-12 11:47:38,201 - INFO - Inicio ETL Distribucion
 2023-04-12 11:47:38,201 - INFO - Inicio ETL Distribucion
+2023-04-12 12:12:03,959 - INFO - Inicio ETL Distribucion
+2023-04-12 12:12:03,959 - INFO - Inicio ETL Distribucion
+2023-04-12 12:12:44,764 - INFO - Inicio ETL Distribucion
+2023-04-12 12:12:44,764 - INFO - Inicio ETL Distribucion
+2023-04-12 12:16:02,247 - INFO - Inicio ETL Distribucion
+2023-04-12 12:16:02,247 - INFO - Inicio ETL Distribucion
+2023-04-12 12:16:44,569 - INFO - Inicio ETL Distribucion
+2023-04-12 12:16:44,569 - INFO - Inicio ETL Distribucion
+2023-04-12 12:17:01,522 - INFO - Inicio ETL Distribucion
+2023-04-12 12:17:01,522 - INFO - Inicio ETL Distribucion
+2023-04-12 12:17:19,517 - INFO - Inicio ETL Distribucion
+2023-04-12 12:17:19,517 - INFO - Inicio ETL Distribucion
+2023-04-12 13:17:38,421 - INFO - Inicio ETL Distribucion
+2023-04-12 13:17:38,421 - INFO - Inicio ETL Distribucion
+2023-04-12 13:18:10,574 - INFO - Fin ETL Distribucion
+2023-04-12 13:18:10,574 - INFO - Fin ETL Distribucion
+2023-04-12 13:19:28,105 - INFO - Inicio ETL Distribucion
+2023-04-12 13:19:28,105 - INFO - Inicio ETL Distribucion
+2023-04-12 13:19:41,700 - INFO - Inicio ETL Distribucion
+2023-04-12 13:19:41,700 - INFO - Inicio ETL Distribucion
+2023-04-12 13:33:47,265 - INFO - Inicio ETL Distribucion
+2023-04-12 13:33:47,265 - INFO - Inicio ETL Distribucion
+2023-04-12 13:37:36,679 - INFO - Inicio ETL Distribucion
+2023-04-12 13:37:36,679 - INFO - Inicio ETL Distribucion
