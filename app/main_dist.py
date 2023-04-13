@@ -1,5 +1,5 @@
 # ========== Modulos Python =============
-import pandas as pd 
+import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -9,7 +9,7 @@ from logger.logger import logger
 from src.distribucion.etl import etl_distribucion
 import dependencies as dp
 from db.connection import engine, conn
-
+from models.model import Conductor, Camion, Wilaya, Tipo_Producto, Tipo_Vehiculo
 
 
 logger = logger()
@@ -29,12 +29,12 @@ print(Base.classes.keys())
 
 
 ## se guardan los objetos en las respectiva variables 
-Distribucion = Base.classes.tbl_distribucion
-Conductor = Base.classes.attsf.tbl_conductor
-Camion = Base.classes.tbl_camion
-Wilaya = Base.classes.tbl_wilaya
-Tipo_Producto = Base.classes.tbl_tipo_producto
-Tipo_Vehiculo = Base.classes.tbl_tipo_vehiculo 
+Tbl_Distribucion = Base.classes.tbl_distribucion
+Tbl_Conductor = Base.classes.attsf.tbl_conductor
+Tbl_Camion = Base.classes.tbl_camion
+Tbl_Wilaya = Base.classes.tbl_wilaya
+Tbl_Tipo_Producto = Base.classes.tbl_tipo_producto
+Tbl_Tipo_Vehiculo = Base.classes.tbl_tipo_vehiculo 
 
 
 
