@@ -24,28 +24,28 @@ Base.prepare(engine, reflect=True)
 # print(tablas)
 
 # Acceder a las tablas de la base de datos a través de su clase ORM
-averia = Base.classes.tbl_averia
-frecuencia = Base.classes.tbl_frecuencia
-taller = Base.classes.tbl_taller
-ot = Base.classes.tbl_ot
-camion = Base.classes.tbl_camion
-tipo_vehiculo = Base.classes.tbl_tipo_vehiculo
-wilaya = Base.classes.tbl_wilaya
-repuesto = Base.classes.tbl_repuesto
-mecanico = Base.classes.tbl_mecanico
-disponibilidad = Base.classes.tbl_disponibilidad
-distribucion = Base.classes.tbl_distribucion
-tipo_producto = Base.classes.tbl_tipo_producto
-conductor = Base.classes.tbl_conductor
-tipo_taller = Base.classes.tbl_tipo_taller
-tipo_ot = Base.classes.tbl_tipo_ot
+tbl_averia = Base.classes.tbl_averia
+tbl_frecuencia = Base.classes.tbl_frecuencia
+tbl_taller = Base.classes.tbl_taller
+tbl_ot = Base.classes.tbl_ot
+tbl_camion = Base.classes.tbl_camion
+tbl_tipo_vehiculo = Base.classes.tbl_tipo_vehiculo
+tbl_wilaya = Base.classes.tbl_wilaya
+tbl_repuesto = Base.classes.tbl_repuesto
+tbl_mecanico = Base.classes.tbl_mecanico
+tbl_disponibilidad = Base.classes.tbl_disponibilidad
+tbl_distribucion = Base.classes.tbl_distribucion
+tbl_tipo_producto = Base.classes.tbl_tipo_producto
+tbl_conductor = Base.classes.tbl_conductor
+tbl_tipo_taller = Base.classes.tbl_tipo_taller
+tbl_tipo_ot = Base.classes.tbl_tipo_ot
 
 
 # crear una instancia de la sesión ORM
 session = Session(engine)
 
 # crear DataFrames
-df_tipo_ot = pd.read_sql(session.query(tipo_ot).statement, conn)
+df_tipo_ot = pd.read_sql(session.query(tbl_tipo_ot).statement, conn)
 
 print(df_tipo_ot)
 
