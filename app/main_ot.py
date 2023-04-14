@@ -38,7 +38,9 @@ df_taller = pd.read_sql(session.query(Taller).statement, conn)
 df_repuesto = pd.read_sql(session.query(Repuesto).statement, conn)
 df_mecanico = pd.read_sql(session.query(Mecanico).statement, conn)
 df_camion = pd.read_sql(session.query(Camion).statement, conn)
+# Obtener la ultima fecha y el ultimo id_ot
 ultima_fecha = session.query(Ot.fecha_inicio).filter(Ot.fecha_inicio != None).order_by(Ot.fecha_inicio.desc()).first()[0]
+ultima_id_ot = session.query(Ot.id_ot).order_by(Ot.id_ot.desc()).first()[0]
 
 
 # Funciones
@@ -107,7 +109,7 @@ df_ot_repuesto = df_ot_prev[['ot', 'aceite', 'anticongelante', 'embrague',
                              'grasa']]
 
 # Se toman las columnas deseadas
-df_ot_prev = df_ot_prev[['ot', 'camion', 'frecuencia', 'tipo_ot', 'fecha_inicio',
+df_ot_prev = df_ot_prev[['ot', 'camion', 'frecuencia', 'mecanico', 'tipo_ot', 'fecha_inicio',
                          'fecha_fin', 'descripcion', 'observacion']]
 
 
@@ -147,7 +149,7 @@ df_ot_corr['descripcion'] = df_ot_corr['descripcion'].apply(limpiar_capitalize)
 
 df_ot_corr['observacion'] = df_ot_corr['observacion'].apply(limpiar_capitalize)
 
-# Eliminar los duplicados
+# Eliminar los duplicados OJO
 df_ot_corr = df_ot_corr.drop_duplicates()
 
 # Se resetea el index por los valores eliminados
@@ -167,7 +169,7 @@ df_ot_averia = df_ot_corr[['ot', 'chasis', 'carroceria', 'ruedas',
                            'electricidad']]
 
 # Se toman las columnas deseadas
-df_ot_corr = df_ot_corr[['ot', 'camion', 'frecuencia', 'tipo_ot', 'fecha_inicio',
+df_ot_corr = df_ot_corr[['ot', 'camion', 'frecuencia', 'mecanico', 'tipo_ot', 'fecha_inicio',
                          'fecha_fin', 'descripcion', 'observacion']]
 
 
@@ -176,20 +178,27 @@ df_ot_corr = df_ot_corr[['ot', 'camion', 'frecuencia', 'tipo_ot', 'fecha_inicio'
 # Concat de ambos dataframes
 df_ot = pd.concat([df_ot_corr, df_ot_prev], axis=0)
 
-# Se toman las columnas deseadas
-df_ot = df_ot[['ot', 'camion', 'frecuencia', 'tipo_ot', 'fecha_inicio',
+# Se toman las columnas deseadas (FALTA LA COLUMNA TALLER QUE AUN NO SE TIENE INFORMACION!!!!!!: entre camion y tipo_ot)
+df_ot = df_ot[['ot', 'camion', 'tipo_ot', 'frecuencia', 'mecanico', 'fecha_inicio',
                'fecha_fin', 'descripcion', 'observacion']]
 
 # Ordenar por fecha
-df_ot = df_ot.sort_values(by='fecha_inicio') 
+df_ot = df_ot.sort_values(by='fecha_inicio')
 
 # Se quitan los indices anteriores ya que se repiten cada anho
 df_ot.reset_index(names='id_attsf', inplace=True)
 df_ot = df_ot.drop('id_attsf', axis=1)
 
 # Columna de indices
-df_ot.index += 1
-df_ot.reset_index(names='id_ot', inplace=True)
+# df_ot.index += 1
+# df_ot.reset_index(names='id_ot', inplace=True)
+
+# contar el número de filas
+num_filas = df_ot.shape[0]
+
+# generar una Serie desde el numero ultima_id_ot
+num_ot = pd.Series(range(ultima_id_ot, num_filas + ultima_id_ot))
+df_ot['id_ot'] = num_ot
 
 
 # ################ MERGES ################
@@ -216,7 +225,7 @@ df_ot = df_ot.drop('frecuencia', axis=1)
 
 # Merge de ot e id_mecanico
 df_ot = pd.merge(df_ot, df_mecanico, how='left', on='mecanico')
-# Eliminar columna frecuencia
+# Eliminar columna mecanico
 df_ot = df_ot.drop('mecanico', axis=1)
 
 # Se reordenan las columnas
@@ -290,7 +299,7 @@ df_ot_repuesto = pd.merge(df_ot_repuesto, df_repuesto, how='left', on='repuesto'
 df_ot_repuesto = df_ot_repuesto.drop('repuesto', axis=1)
 
 
-# ################ OT REPUESTO ################
+# ################ DBEAVER ################
 
 df_ot.to_sql(name='tbl_ot', con=engine, if_exists='append', index=False)
 df_ot_averia.to_sql(name='tbl_ot_averia', con=engine, if_exists='append', index=False)
