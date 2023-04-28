@@ -1,1 +1,51 @@
 2023-04-21 11:21:17,966 - INFO - Inicio ETL Ot
+2023-04-28 09:24:23,327 - INFO - Inicio ETL Maestros
+2023-04-28 09:24:23,327 - INFO - Inicio ETL Maestros
+2023-04-28 09:24:55,987 - INFO - Inicio ETL Maestros
+2023-04-28 09:24:55,987 - INFO - Inicio ETL Maestros
+2023-04-28 09:25:35,276 - INFO - Inicio ETL Maestros
+2023-04-28 09:25:35,276 - INFO - Inicio ETL Maestros
+2023-04-28 10:32:24,283 - INFO - Inicio ETL Maestros
+2023-04-28 10:36:57,620 - INFO - Inicio ETL Maestros
+2023-04-28 10:37:21,126 - INFO - Inicio ETL Maestros
+2023-04-28 10:38:39,519 - INFO - Inicio ETL Maestros
+2023-04-28 10:39:25,498 - INFO - Inicio ETL Maestros
+2023-04-28 10:39:43,154 - INFO - Inicio ETL Maestros
+2023-04-28 10:43:50,465 - INFO - Inicio ETL Maestros
+2023-04-28 10:47:11,242 - INFO - Inicio ETL Maestros
+2023-04-28 10:48:23,768 - INFO - Inicio ETL Maestros
+2023-04-28 10:52:02,813 - INFO - Inicio ETL Maestros
+2023-04-28 10:54:02,884 - INFO - Inicio ETL Maestros
+2023-04-28 11:00:35,112 - INFO - Inicio ETL Maestros
+2023-04-28 11:05:09,106 - INFO - Inicio ETL Maestros
+2023-04-28 11:05:35,064 - INFO - Inicio ETL Maestros
+2023-04-28 11:06:44,589 - INFO - Inicio ETL Maestros
+2023-04-28 11:07:51,618 - INFO - Inicio ETL Maestros
+2023-04-28 11:08:14,450 - INFO - Inicio ETL Maestros
+2023-04-28 11:12:53,187 - INFO - Inicio ETL Maestros
+2023-04-28 11:13:46,020 - INFO - Inicio ETL Maestros
+2023-04-28 11:13:48,857 - WARNING - En la tabla camion, id_wilaya mal referenciado para los siguientes elementos: CT7
+2023-04-28 11:19:54,994 - INFO - Inicio ETL Maestros
+2023-04-28 11:19:56,225 - WARNING - En la tabla camion, id_wilaya mal referenciado para los siguientes elementos: CT7
+2023-04-28 11:24:44,771 - INFO - Inicio ETL Maestros
+2023-04-28 11:24:46,032 - WARNING - En la tabla camion, id_wilaya mal referenciado para los siguientes elementos: CT7
+2023-04-28 11:27:00,043 - INFO - Inicio ETL Maestros
+2023-04-28 11:28:28,646 - INFO - Inicio ETL Maestros
+2023-04-28 11:53:22,454 - INFO - Inicio ETL Maestros
+2023-04-28 11:53:23,665 - WARNING - En la tabla camion, id_wilaya mal referenciado para los siguientes elementos: CT7
+2023-04-28 11:53:56,960 - INFO - Inicio ETL Maestros
+2023-04-28 11:53:58,178 - WARNING - En la tabla camion, id_wilaya mal referenciado para los siguientes elementos: CT7
+2023-04-28 11:54:16,552 - INFO - Fin ETL Distribucion
+2023-04-28 12:02:40,340 - INFO - Inicio ETL Maestros
+2023-04-28 12:02:42,940 - INFO - Actualización tabla Wilaya
+2023-04-28 12:02:48,407 - INFO - Actualización tabla Personal
+2023-04-28 12:02:49,290 - INFO - Actualización tabla Averia
+2023-04-28 12:02:57,925 - INFO - Actualización tabla Repuesto
+2023-04-28 12:02:58,316 - INFO - Actualización tabla Frecuencia
+2023-04-28 12:02:58,414 - INFO - Actualización tabla Tipo OT
+2023-04-28 12:02:58,563 - INFO - Actualización tabla Tipo Producto
+2023-04-28 12:02:58,671 - INFO - Actualización tabla Tipo Taller
+2023-04-28 12:02:58,915 - INFO - Actualización tabla Tipo Vehiculo
+2023-04-28 12:03:06,883 - INFO - Actualización tabla Camion
+2023-04-28 12:03:07,508 - INFO - Actualización tabla Taller
+2023-04-28 12:03:09,983 - INFO - Fin ETL Maestros
