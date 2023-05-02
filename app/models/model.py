@@ -24,6 +24,6 @@ Mecanico = Base.classes.tbl_mecanico
 Disponibilidad = Base.classes.tbl_disponibilidad
 Distribucion = Base.classes.tbl_distribucion
 Tipo_producto = Base.classes.tbl_tipo_producto
-Conductor = Base.classes.tbl_conductor
+Personal = Base.classes.tbl_personal
 Tipo_taller = Base.classes.tbl_tipo_taller
 Tipo_ot = Base.classes.tbl_tipo_ot

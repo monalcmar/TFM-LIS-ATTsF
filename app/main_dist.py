@@ -63,8 +63,7 @@ for file_name in os.listdir(path_input_nuevos):
                     names=['no_serie', 'conductor', 'nombre_attsf','fecha_salida', 'hora_salida', 'fecha_llegada', 
                         'hora_llegada', 'km_salida', 'km_llegada', 'km_totales',
                         'tm', 'tipo_producto', 'wilaya', 'incidencias', 'observaciones'], 
-                    header=3
-        )
+                        header=3)
 df_distribucion_nuevos = df_distribucion_nuevos.dropna(how='all')
 
 ## union de fechas y horas 
