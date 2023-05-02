@@ -25,7 +25,7 @@ path_2023 = dp.rootFolder / 'data' / '2023'
 
 logger = logger()
 
-logger.info('Inicio ETL Ot')
+logger.info('Inicio ETL Agua')
 
 # etl_agua()
 
@@ -131,7 +131,7 @@ def pasar_a_int(dataframe, columna):
 # SE PONE EL COSTE? OJO CON LAS FECHAS!
 
 # Se extrae la información del excel de ot preventivo
-df_prev = pd.read_excel(
+df_prev_agua = pd.read_excel(
     path_2023 / 'BASE DE DATOS 2023 UNHCR.xlsx',
     sheet_name='Base de datos Preventiva',
     usecols='A, B, G, H, I:J, L:Z, AA',
@@ -150,95 +150,95 @@ df_prev = pd.read_excel(
 # Convertir la fecha a tipo datetime64[ns]
 ultima_fecha = np.datetime64(ultima_fecha)
 
-df_ot_prev = df_prev.loc[df_prev['fecha_inicio'] >= ultima_fecha] 
+df_ot_agua_prev = df_prev_agua.loc[df_prev_agua['fecha_inicio'] >= ultima_fecha] 
 
 # Se eliminan las filas con valores nan en todas las columnas
-df_ot_prev.dropna(how='all', inplace=True)
+df_ot_agua_prev.dropna(how='all', inplace=True)
 # si no tiene numero de ot tampoco tiene informacion
-df_ot_prev.dropna(subset=['ot'], inplace=True)
+df_ot_agua_prev.dropna(subset=['ot'], inplace=True)
 # camiones que son vacios y su informacion tambien
-df_ot_prev.dropna(subset=['camion'], inplace=True)
+df_ot_agua_prev.dropna(subset=['camion'], inplace=True)
 # SE QUITAN LOS DATOS QUE NO TIENEN FECHA DE INICIO
-df_ot_prev.dropna(subset=['fecha_inicio'], inplace=True)
+df_ot_agua_prev.dropna(subset=['fecha_inicio'], inplace=True)
 
 
 # Se cambian los nan por un tipo de frecuencia 'No frecuencia'
-df_ot_prev['frecuencia'] = df_ot_prev['frecuencia'].fillna('No frecuencia')
+df_ot_agua_prev['frecuencia'] = df_ot_agua_prev['frecuencia'].fillna('No frecuencia')
 
 # ---------------------------------------------
 # Se limpian los datos
-df_ot_prev['ot'] = df_ot_prev['ot'].astype(str)
-df_ot_prev['ot'] = limpiar_upper(df_ot_prev, 'ot')
+df_ot_agua_prev['ot'] = df_ot_agua_prev['ot'].astype(str)
+df_ot_agua_prev['ot'] = limpiar_upper(df_ot_agua_prev, 'ot')
 
-df_ot_prev['camion'] = limpiar_upper(df_ot_prev, 'camion')
+df_ot_agua_prev['camion'] = limpiar_upper(df_ot_agua_prev, 'camion')
 
-df_ot_prev['taller'] = limpiar_upper(df_ot_prev, 'taller')
+df_ot_agua_prev['taller'] = limpiar_upper(df_ot_agua_prev, 'taller')
 
-df_ot_prev['frecuencia'] = limpiar_capitalize(df_ot_prev, 'frecuencia')
+df_ot_agua_prev['frecuencia'] = limpiar_capitalize(df_ot_agua_prev, 'frecuencia')
 
-# df_ot_prev['coste'] = df_ot_prev['coste'].astype(float)
+# df_ot_agua_prev['coste'] = df_ot_agua_prev['coste'].astype(float)
 
 columnas_litros = ['aceite motor', 'anticongelante', 'liquido de embrague',
                    'liquido direccion', 'liquido de freno', 'agua destilada', 'aceite caja cambios',
                    'acido baterias']
-df_ot_prev['aceite motor'] = pasar_a_int(df_ot_prev, 'aceite motor')
-df_ot_prev['anticongelante'] = pasar_a_int(df_ot_prev, 'anticongelante')
-df_ot_prev['liquido de embrague'] = pasar_a_int(df_ot_prev, 'liquido de embrague')
-df_ot_prev['liquido direccion'] = pasar_a_int(df_ot_prev, 'liquido direccion')
-df_ot_prev['liquido de freno'] = pasar_a_int(df_ot_prev, 'liquido de freno')
-df_ot_prev['agua destilada'] = pasar_a_int(df_ot_prev, 'agua destilada')
-df_ot_prev['aceite caja cambios'] = pasar_a_int(df_ot_prev, 'aceite caja cambios')
-df_ot_prev['acido baterias'] = pasar_a_int(df_ot_prev, 'acido baterias')
+df_ot_agua_prev['aceite motor'] = pasar_a_int(df_ot_agua_prev, 'aceite motor')
+df_ot_agua_prev['anticongelante'] = pasar_a_int(df_ot_agua_prev, 'anticongelante')
+df_ot_agua_prev['liquido de embrague'] = pasar_a_int(df_ot_agua_prev, 'liquido de embrague')
+df_ot_agua_prev['liquido direccion'] = pasar_a_int(df_ot_agua_prev, 'liquido direccion')
+df_ot_agua_prev['liquido de freno'] = pasar_a_int(df_ot_agua_prev, 'liquido de freno')
+df_ot_agua_prev['agua destilada'] = pasar_a_int(df_ot_agua_prev, 'agua destilada')
+df_ot_agua_prev['aceite caja cambios'] = pasar_a_int(df_ot_agua_prev, 'aceite caja cambios')
+df_ot_agua_prev['acido baterias'] = pasar_a_int(df_ot_agua_prev, 'acido baterias')
 
 columnas_kilos = ['grasa']
-df_ot_prev['grasa'] = pasar_a_int(df_ot_prev, 'grasa')
+df_ot_agua_prev['grasa'] = pasar_a_int(df_ot_agua_prev, 'grasa')
 
 columnas_unidades = ['filtro de aceite', 'filtro de aire', 'filtro de gasoil',
                      'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',]
-df_ot_prev['filtro de aceite'] = pasar_a_int(df_ot_prev, 'filtro de aceite')
-df_ot_prev['filtro de aire'] = pasar_a_int(df_ot_prev, 'filtro de aire')
-df_ot_prev['filtro de gasoil'] = pasar_a_int(df_ot_prev, 'filtro de gasoil')
-df_ot_prev['filtro hidraulico'] = pasar_a_int(df_ot_prev, 'filtro hidraulico')
-df_ot_prev['filtro separador de gasoil'] = pasar_a_int(df_ot_prev, 'filtro separador de gasoil')
-df_ot_prev['pre-filtro de gasoil'] = pasar_a_int(df_ot_prev, 'pre-filtro de gasoil')
+df_ot_agua_prev['filtro de aceite'] = pasar_a_int(df_ot_agua_prev, 'filtro de aceite')
+df_ot_agua_prev['filtro de aire'] = pasar_a_int(df_ot_agua_prev, 'filtro de aire')
+df_ot_agua_prev['filtro de gasoil'] = pasar_a_int(df_ot_agua_prev, 'filtro de gasoil')
+df_ot_agua_prev['filtro hidraulico'] = pasar_a_int(df_ot_agua_prev, 'filtro hidraulico')
+df_ot_agua_prev['filtro separador de gasoil'] = pasar_a_int(df_ot_agua_prev, 'filtro separador de gasoil')
+df_ot_agua_prev['pre-filtro de gasoil'] = pasar_a_int(df_ot_agua_prev, 'pre-filtro de gasoil')
 
 # ---------------------------------------------
 # Se reemplazan los valores de taller
-df_ot_prev = df_ot_prev.replace({'taller': {'ATC RABUNI': 'CLM', 'TR AAIUN': 'Aaiun',
+df_ot_agua_prev = df_ot_agua_prev.replace({'taller': {'ATC RABUNI': 'CLM', 'TR AAIUN': 'Aaiun',
                                             'TR AUSERD': 'Auserd', 'TR BOUJDUR': 'Bojador',
                                             'TR DAJLA': 'Dajla', 'TR SMARA': 'Smara',
                                             'TR TRANSPORT': 'BDT'}})
 
 # Se resetea el index
-df_ot_prev.reset_index(inplace=True, drop=True)
+df_ot_agua_prev.reset_index(inplace=True, drop=True)
 
 # ---------------------------------------------
 
 # Crear una columna de mecanico
-df_ot_prev['mecanico'] = ''
+df_ot_agua_prev['mecanico'] = ''
 
 # Crear una columna de tipo_ot = 'Preventivo'
-df_ot_prev['tipo_ot'] = 'Preventivo'
+df_ot_agua_prev['tipo_ot'] = 'Preventivo'
 
 # Crear una columna de descripcion_trabajo_solicitado
-df_ot_prev['descripcion_trabajo_solicitado'] = ''
+df_ot_agua_prev['descripcion_trabajo_solicitado'] = ''
 
 # Crear una columna de descripcion_trabajo_realizado
-df_ot_prev['descripcion_trabajo_realizado'] = ''
+df_ot_agua_prev['descripcion_trabajo_realizado'] = ''
 
 # Crear una columna de observacion
-df_ot_prev['observacion'] = ''
+df_ot_agua_prev['observacion'] = ''
 # ---------------------------------------------
 
 # Se define el dataframe de ot repuesto (se usara mas adelante)
-df_ot_repuesto = df_ot_prev[['ot', 'aceite motor', 'anticongelante', 'liquido de embrague',
+df_ot_agua_repuesto = df_ot_agua_prev[['ot', 'aceite motor', 'anticongelante', 'liquido de embrague',
                              'liquido direccion', 'liquido de freno', 'agua destilada',
                              'aceite caja cambios', 'acido baterias', 'grasa', 'filtro de aceite',
                              'filtro de aire', 'filtro de gasoil', 'filtro hidraulico',
                              'filtro separador de gasoil', 'pre-filtro de gasoil']]
 
 # Se toman las columnas deseadas
-df_ot_prev = df_ot_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
+df_ot_agua_prev = df_ot_agua_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
                          'mecanico', 'fecha_inicio', 'fecha_fin',
                          'descripcion_trabajo_solicitado',
                          'descripcion_trabajo_realizado', 'observacion']]
@@ -248,7 +248,7 @@ df_ot_prev = df_ot_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
 # PROBLEMA CON LOS MECANICOS, VA A VER SOLO ESAS AVERIAS?
 
 # Se extrae la información del excel de ot correctivo
-df_corr = pd.read_excel(
+df_corr_agua = pd.read_excel(
     path_2023 / 'BASE DE DATOS 2023 UNHCR.xlsx',
     sheet_name='Base de datos Correctiva',
     usecols='A, B, C, E, I:J, L:P, Q, R, S',
@@ -260,56 +260,56 @@ df_corr = pd.read_excel(
 )
 
 # Seleccionar las filas que tienen fecha igual o posterior a la fecha de referencia
-df_ot_corr = df_corr.loc[df_corr['fecha_inicio'] >= ultima_fecha]
+df_ot_agua_corr = df_corr_agua.loc[df_corr_agua['fecha_inicio'] >= ultima_fecha]
 
 # Se eliminan las filas con valores nan en todas las columnas
-df_ot_corr.dropna(how='all', inplace=True)
+df_ot_agua_corr.dropna(how='all', inplace=True)
 # si no tiene numero de ot tampoco tiene informacion
-df_ot_corr.dropna(subset=['ot'], inplace=True)
+df_ot_agua_corr.dropna(subset=['ot'], inplace=True)
 # camiones que son vacios y su informacion tambien
-df_ot_corr.dropna(subset=['camion'], inplace=True)
+df_ot_agua_corr.dropna(subset=['camion'], inplace=True)
 # SE QUITAN LOS DATOS QUE NO TIENEN FECHA DE INICIO
-df_ot_corr.dropna(subset=['fecha_inicio'], inplace=True)
+df_ot_agua_corr.dropna(subset=['fecha_inicio'], inplace=True)
 
 # ---------------------------------------------
 # Se limpian los datos
-df_ot_corr['ot'] = df_ot_corr['ot'].astype(str)
-df_ot_corr['ot'] = limpiar_upper(df_ot_corr, 'ot')
+df_ot_agua_corr['ot'] = df_ot_agua_corr['ot'].astype(str)
+df_ot_agua_corr['ot'] = limpiar_upper(df_ot_agua_corr, 'ot')
 
-df_ot_corr['camion'] = limpiar_upper(df_ot_corr, 'camion')
+df_ot_agua_corr['camion'] = limpiar_upper(df_ot_agua_corr, 'camion')
 
-df_ot_corr['mecanico'] = limpiar_capitalize(df_ot_corr, 'mecanico')
+df_ot_agua_corr['mecanico'] = limpiar_capitalize(df_ot_agua_corr, 'mecanico')
 
-df_ot_corr['descripcion_trabajo_solicitado'] = limpiar_capitalize(df_ot_corr, 'descripcion_trabajo_solicitado')
+df_ot_agua_corr['descripcion_trabajo_solicitado'] = limpiar_capitalize(df_ot_agua_corr, 'descripcion_trabajo_solicitado')
 
-df_ot_corr['descripcion_trabajo_realizado'] = limpiar_capitalize(df_ot_corr, 'descripcion_trabajo_realizado')
+df_ot_agua_corr['descripcion_trabajo_realizado'] = limpiar_capitalize(df_ot_agua_corr, 'descripcion_trabajo_realizado')
 
-df_ot_corr['observacion'] = limpiar_capitalize(df_ot_corr, 'observacion')
+df_ot_agua_corr['observacion'] = limpiar_capitalize(df_ot_agua_corr, 'observacion')
 
 columnas_averias = ['chasis', 'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos']
-df_ot_corr['chasis'] = pasar_a_int(df_ot_corr, 'chasis')
-df_ot_corr['carroceria'] = pasar_a_int(df_ot_corr, 'carroceria')
-df_ot_corr['ruedas'] = pasar_a_int(df_ot_corr, 'ruedas')
-df_ot_corr['mecanica'] = pasar_a_int(df_ot_corr, 'mecanica')
-df_ot_corr['elec, vehiculos'] = pasar_a_int(df_ot_corr, 'elec, vehiculos')
+df_ot_agua_corr['chasis'] = pasar_a_int(df_ot_agua_corr, 'chasis')
+df_ot_agua_corr['carroceria'] = pasar_a_int(df_ot_agua_corr, 'carroceria')
+df_ot_agua_corr['ruedas'] = pasar_a_int(df_ot_agua_corr, 'ruedas')
+df_ot_agua_corr['mecanica'] = pasar_a_int(df_ot_agua_corr, 'mecanica')
+df_ot_agua_corr['elec, vehiculos'] = pasar_a_int(df_ot_agua_corr, 'elec, vehiculos')
 
 # ---------------------------------------------
 # Se reemplazan los valores de taller
-df_ot_corr = df_ot_corr.replace({'taller': {'ATC RABUNI': 'CLM', 'TR AAIUN': 'Aaiun',
+df_ot_agua_corr = df_ot_agua_corr.replace({'taller': {'ATC RABUNI': 'CLM', 'TR AAIUN': 'Aaiun',
                                             'TR AUSERD': 'Auserd', 'TR BOUJDUR': 'Bojador',
                                             'TR DAJLA': 'Dajla', 'TR SMARA': 'Smara',
                                             'TR TRANSPORT': 'BDT'}})
 
 # ---------------------------------------------
 # Crear una columna de frecuencia = 'No frecuencia'
-df_ot_corr['frecuencia'] = 'No frecuencia'
+df_ot_agua_corr['frecuencia'] = 'No frecuencia'
 
 # Crear una columna de tipo_ot = 'Correctivo'
-df_ot_corr['tipo_ot'] = 'Correctivo'
+df_ot_agua_corr['tipo_ot'] = 'Correctivo'
 
 # REVISAR LOS MECANICOS CAMBIADOS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Se reemplazan los nombres de los mecanicos
-df_ot_corr = df_ot_corr.replace({'mecanico': {'Saleh': 'Saleh Mohamed Salma',
+df_ot_agua_corr = df_ot_agua_corr.replace({'mecanico': {'Saleh': 'Saleh Mohamed Salma',
                                               'Mohamed lamin': 'Mohamed Lamin Hussein',
                                               'Bal-lal hammu': 'Bel-lal Hammu',
                                               'Ahmed salek andal': 'Ahmed Salec',
@@ -330,14 +330,14 @@ df_ot_corr = df_ot_corr.replace({'mecanico': {'Saleh': 'Saleh Mohamed Salma',
 # ---------------------------------------------
 
 # Se resetea el index por los valores eliminados
-df_ot_corr.reset_index(inplace=True, drop=True)
+df_ot_agua_corr.reset_index(inplace=True, drop=True)
 
 # Se define el dataframe de ot averia (se usara mas adelante)
-df_ot_averia = df_ot_corr[['ot', 'chasis', 'carroceria', 'ruedas',
+df_ot_agua_averia = df_ot_agua_corr[['ot', 'chasis', 'carroceria', 'ruedas',
                            'mecanica', 'elec, vehiculos']]
 
 # Se toman las columnas deseadas
-df_ot_corr = df_ot_corr[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
+df_ot_agua_corr = df_ot_agua_corr[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
                          'mecanico', 'fecha_inicio', 'fecha_fin',
                          'descripcion_trabajo_solicitado',
                          'descripcion_trabajo_realizado', 'observacion']]
@@ -346,94 +346,94 @@ df_ot_corr = df_ot_corr[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
 # ######################################### UNION #########################################
 
 # Concat de ambos dataframes
-df_ot = pd.concat([df_ot_corr, df_ot_prev], axis=0)
+df_ot_agua = pd.concat([df_ot_agua_corr, df_ot_agua_prev], axis=0)
 
 # Se toman las columnas deseadas
-df_ot = df_ot[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller', 'mecanico',
+df_ot_agua = df_ot_agua[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller', 'mecanico',
                'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
                'descripcion_trabajo_realizado', 'observacion']]
 
 # Se quitan los indices anteriores ya que se repiten cada anho
-df_ot.reset_index(inplace=True, drop=True)
+df_ot_agua.reset_index(inplace=True, drop=True)
 
 # ######################################### MERGES #########################################
 
 # Merge de ot e id_camion
-df_ot = pd.merge(df_ot, df_camion.loc[:, ['id_camion', 'nombre_attsf']], how='left', left_on='camion', right_on='nombre_attsf')
+df_ot_agua = pd.merge(df_ot_agua, df_camion.loc[:, ['id_camion', 'nombre_attsf']], how='left', left_on='camion', right_on='nombre_attsf')
 # Eliminar columna nombre_attsf
-df_ot = df_ot.drop('nombre_attsf', axis=1)
+df_ot_agua = df_ot_agua.drop('nombre_attsf', axis=1)
 
 # ---------------TALLER VACIO ---------------
 # Como hay talleres vacios se extraen del camion y las wilayas
-df_ot = pd.merge(df_ot, df_camion.loc[:, ['nombre_attsf', 'id_wilaya', 'id_tipo_vehiculo']],
+df_ot_agua = pd.merge(df_ot_agua, df_camion.loc[:, ['nombre_attsf', 'id_wilaya', 'id_tipo_vehiculo']],
                  how='left', left_on='camion', right_on='nombre_attsf')
-df_ot = pd.merge(df_ot, df_wilaya.loc[:, ['id_wilaya', 'wilaya']], how='left', on='id_wilaya')
+df_ot_agua = pd.merge(df_ot_agua, df_wilaya.loc[:, ['id_wilaya', 'wilaya']], how='left', on='id_wilaya')
 # Eliminar columna id_wilaya, camion, nombre_attsf
-df_ot = df_ot.drop(['id_wilaya', 'camion', 'nombre_attsf'], axis=1)
+df_ot_agua = df_ot_agua.drop(['id_wilaya', 'camion', 'nombre_attsf'], axis=1)
 
 # Se crea una columna taller y se le aplica la funcion
-df_ot['taller2'] = ''
-df_ot['taller2'] = df_ot.apply(asociar_wilaya_taller, axis=1)
+df_ot_agua['taller2'] = ''
+df_ot_agua['taller2'] = df_ot_agua.apply(asociar_wilaya_taller, axis=1)
 
 # Si hay valores nan en taller sustituye dichos valores por los obtenidos con la funcion
-df_ot['taller'] = df_ot['taller'].replace('', np.NaN)
-df_ot['taller'] = df_ot['taller'].fillna(df_ot['taller2'])
+df_ot_agua['taller'] = df_ot_agua['taller'].replace('', np.NaN)
+df_ot_agua['taller'] = df_ot_agua['taller'].fillna(df_ot_agua['taller2'])
 
 # Eliminar columna wilaya, id_tipo_vehiculo, taller2
-df_ot = df_ot.drop(['wilaya', 'id_tipo_vehiculo', 'taller2'], axis=1)
+df_ot_agua = df_ot_agua.drop(['wilaya', 'id_tipo_vehiculo', 'taller2'], axis=1)
 # ---------------------------------------------
 
 # Merge de ot e id_taller
-df_ot = pd.merge(df_ot, df_taller.loc[:, ['id_taller', 'taller']], how='left', on='taller')
+df_ot_agua = pd.merge(df_ot_agua, df_taller.loc[:, ['id_taller', 'taller']], how='left', on='taller')
 # Eliminar columna taller
-df_ot = df_ot.drop('taller', axis=1)
+df_ot_agua = df_ot_agua.drop('taller', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot['id_taller'] = df_ot['id_taller'].replace({np.NaN: None}).astype("Int64")
+df_ot_agua['id_taller'] = df_ot_agua['id_taller'].replace({np.NaN: None}).astype("Int64")
 
 # Merge de ot e id_tipo_ot
-df_ot = pd.merge(df_ot, df_tipo_ot, how='left', on='tipo_ot')
+df_ot_agua = pd.merge(df_ot_agua, df_tipo_ot, how='left', on='tipo_ot')
 # Eliminar columna tipo_ot
-df_ot = df_ot.drop('tipo_ot', axis=1)
+df_ot_agua = df_ot_agua.drop('tipo_ot', axis=1)
 
 # Merge de ot e id_frecuencia
-df_ot = pd.merge(df_ot, df_frecuencia, how='left', on='frecuencia')
+df_ot_agua = pd.merge(df_ot_agua, df_frecuencia, how='left', on='frecuencia')
 # Eliminar columna frecuencia
-df_ot = df_ot.drop('frecuencia', axis=1)
+df_ot_agua = df_ot_agua.drop('frecuencia', axis=1)
 
 # Merge de ot e id_mecanico
-df_ot = pd.merge(df_ot, df_personal.loc[:, ['id_personal', 'nombre']], how='left', left_on='mecanico', right_on='nombre')
+df_ot_agua = pd.merge(df_ot_agua, df_personal.loc[:, ['id_personal', 'nombre']], how='left', left_on='mecanico', right_on='nombre')
 # Cambiar nombre de la columna id_personal
-df_ot = df_ot.rename(columns={'id_personal': 'id_mecanico'})
+df_ot_agua = df_ot_agua.rename(columns={'id_personal': 'id_mecanico'})
 # Eliminar columna mecanico
-df_ot = df_ot.drop('mecanico', axis=1)
+df_ot_agua = df_ot_agua.drop('mecanico', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot['id_mecanico'] = df_ot['id_mecanico'].replace({np.NaN: None}).astype("Int64")
+df_ot_agua['id_mecanico'] = df_ot_agua['id_mecanico'].replace({np.NaN: None}).astype("Int64")
 
 # Se reordenan las columnas
-df_ot = df_ot[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
+df_ot_agua = df_ot_agua[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
                'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
                'descripcion_trabajo_realizado', 'observacion']]
 
 # ######################################### OT COMPROBAR FECHA #########################################
 
 # Se elimina la fila cuya ot es ultima_ot y fecha es ultima_fecha
-df_ot = df_ot.drop(df_ot[(df_ot['fecha_inicio'] == ultima_fecha) & (df_ot['ot'].isin(ot_ultima_fecha))].index)
+df_ot_agua = df_ot_agua.drop(df_ot_agua[(df_ot_agua['fecha_inicio'] == ultima_fecha) & (df_ot_agua['ot'].isin(ot_ultima_fecha[0]))].index)
 
 # Ordenar por fecha
-df_ot = df_ot.sort_values(by='fecha_inicio')
+df_ot_agua = df_ot_agua.sort_values(by='fecha_inicio')
 
-df_ot.reset_index(inplace=True, drop=True)
+df_ot_agua.reset_index(inplace=True, drop=True)
 
 # Numero de filas del dataframe
-num_filas = df_ot.shape[0]
+num_filas = df_ot_agua.shape[0]
 
 # Generar una Serie desde el numero ultima_id_ot
 num_ot = pd.Series(range(ultima_id_ot + 1, num_filas + ultima_id_ot + 1))
-df_ot['id_ot'] = num_ot
+
 
 
 # Se reordenan las columnas
-df_ot = df_ot[['id_ot', 'ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
+df_ot_agua = df_ot_agua[['id_ot', 'ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
                'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
                'descripcion_trabajo_realizado', 'observacion']]
 
@@ -456,29 +456,29 @@ df_tipo_averia = df_tipo_averia.drop(filas_a_eliminar.index)
 averias = df_tipo_averia['averia'].tolist()
 
 # Se crea la tabla con el ot y las averias
-df_otc_averia = df_ot_averia.rename(columns={'NºOTC': 'ot'}).dropna(subset='ot')
+df_ot_aguac_averia = df_ot_agua_averia.rename(columns={'NºOTC': 'ot'}).dropna(subset='ot')
 
 # Se juntan e invierten columnas
-df_ot_averia = pd.melt(
-    df_otc_averia,
+df_ot_agua_averia = pd.melt(
+    df_ot_aguac_averia,
     id_vars='ot',
     value_vars=averias
 ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'averia'})
 
 # Se limpian los datos
-df_ot_averia['averia'] = limpiar_capitalize(df_ot_averia, 'averia')
+df_ot_agua_averia['averia'] = limpiar_capitalize(df_ot_agua_averia, 'averia')
 
 # Merge ot
-df_ot_averia = pd.merge(df_ot_averia, df_ot.loc[:, ['id_ot', 'ot']], how='left', on='ot')
-df_ot_averia.dropna(subset=['id_ot'], inplace=True)  # NO ES NECESARIO CREO
-df_ot_averia['id_ot'] = df_ot_averia['id_ot'].astype(int)  # NO ES NECESARIO CREO
+df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_ot_agua.loc[:, ['id_ot', 'ot']], how='left', on='ot')
+df_ot_agua_averia.dropna(subset=['id_ot'], inplace=True)  # NO ES NECESARIO CREO
+df_ot_agua_averia['id_ot'] = df_ot_agua_averia['id_ot'].astype(int)  # NO ES NECESARIO CREO
 # Se elimina la columna ot
-df_ot_averia = df_ot_averia.drop('ot', axis=1)
+df_ot_agua_averia = df_ot_agua_averia.drop('ot', axis=1)
 
 # Merge averia
-df_ot_averia = pd.merge(df_ot_averia, df_averia, how='left', on='averia')
+df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_averia, how='left', on='averia')
 # Se elimina la columna averia
-df_ot_averia = df_ot_averia.drop('averia', axis=1)
+df_ot_agua_averia = df_ot_agua_averia.drop('averia', axis=1)
 
 # ######################################### OT REPUESTO #########################################
 
@@ -498,29 +498,29 @@ df_tipo_repuesto = df_tipo_repuesto.drop(filas_a_eliminar.index)
 repuestos = df_tipo_repuesto['repuesto'].tolist()
 
 # Se crea la tabla con el ot y los repuestos
-df_otc_repuesto = df_ot_repuesto.rename(columns={'NºOTC': 'ot'}).dropna(subset='ot')
+df_ot_aguac_repuesto = df_ot_agua_repuesto.rename(columns={'NºOTC': 'ot'}).dropna(subset='ot')
 
 # Se juntan e invierten columnas
-df_ot_repuesto = pd.melt(
-    df_otc_repuesto,
+df_ot_agua_repuesto = pd.melt(
+    df_ot_aguac_repuesto,
     id_vars='ot',
     value_vars=repuestos
 ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'repuesto'})
 
 # Se limpian los datos
-df_ot_repuesto['repuesto'] = limpiar_capitalize(df_ot_repuesto, 'repuesto')
+df_ot_agua_repuesto['repuesto'] = limpiar_capitalize(df_ot_agua_repuesto, 'repuesto')
 
 # Merge ot
-df_ot_repuesto = pd.merge(df_ot_repuesto, df_ot.loc[:, ['id_ot', 'ot']], how='left', on='ot')
-df_ot_repuesto.dropna(subset=['id_ot'], inplace=True)  # NO ES NECESARIO CREO
+df_ot_agua_repuesto = pd.merge(df_ot_agua_repuesto, df_ot_agua.loc[:, ['id_ot', 'ot']], how='left', on='ot')
+df_ot_agua_repuesto.dropna(subset=['id_ot'], inplace=True)  # NO ES NECESARIO CREO
 # Se elimina la columna ot
-df_ot_repuesto = df_ot_repuesto.drop('ot', axis=1)
-df_ot_repuesto['id_ot'] = df_ot_repuesto['id_ot'].astype(int)  # NO ES NECESARIO CREO
+df_ot_agua_repuesto = df_ot_agua_repuesto.drop('ot', axis=1)
+df_ot_agua_repuesto['id_ot'] = df_ot_agua_repuesto['id_ot'].astype(int)  # NO ES NECESARIO CREO
 
 # Merge repuesto
-df_ot_repuesto = pd.merge(df_ot_repuesto, df_repuesto, how='left', on='repuesto')
+df_ot_agua_repuesto = pd.merge(df_ot_agua_repuesto, df_repuesto, how='left', on='repuesto')
 # Se elimina la columna repuesto
-df_ot_repuesto = df_ot_repuesto.drop('repuesto', axis=1)
+df_ot_agua_repuesto = df_ot_agua_repuesto.drop('repuesto', axis=1)
 
 
 
@@ -528,14 +528,14 @@ df_ot_repuesto = df_ot_repuesto.drop('repuesto', axis=1)
 
 
 
-df_ot.to_csv(path_output / "BORRAR2.csv", index=False, encoding='utf-8')
+df_ot_agua.to_csv(path_output / "BORRAR2.csv", index=False, encoding='utf-8')
 
 
 # ######################################### DBEAVER #########################################
 
-# df_ot.to_sql('tbl_ot', con=engine, if_exists='append', index=False)
-# df_ot_averia.to_sql('tbl_ot_averia', con=engine, if_exists='append', index=False)
-# df_ot_repuesto.to_sql('tbl_ot_repuesto', con=engine, if_exists='append', index=False)
+# df_ot_agua.to_sql('tbl_ot', con=engine, if_exists='append', index=False)
+# df_ot_agua_averia.to_sql('tbl_ot_averia', con=engine, if_exists='append', index=False)
+# df_ot_agua_repuesto.to_sql('tbl_ot_repuesto', con=engine, if_exists='append', index=False)
 
 session.close()
-logger.info('Fin ETL Distribucion')
+logger.info('Fin ETL Agua')
