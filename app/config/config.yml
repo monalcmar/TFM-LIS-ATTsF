@@ -1,7 +1,7 @@
 LOCAL:
     database:
-        host: '3.69.128.37'
-        db: 'postgres'
+        host: 'attsrabuni.ddns.net'
+        db: 'AttsfTd'
 
 DEV:
     database:

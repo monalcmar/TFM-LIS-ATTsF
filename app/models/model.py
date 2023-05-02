@@ -24,5 +24,6 @@ Personal = Base.classes.tbl_personal
 Disponibilidad = Base.classes.tbl_disponibilidad
 Distribucion = Base.classes.tbl_distribucion
 Tipo_producto = Base.classes.tbl_tipo_producto
+Personal = Base.classes.tbl_personal
 Tipo_taller = Base.classes.tbl_tipo_taller
 Tipo_ot = Base.classes.tbl_tipo_ot
