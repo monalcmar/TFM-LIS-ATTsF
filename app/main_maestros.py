@@ -109,18 +109,32 @@ df_tipo_vehiculo = pd.read_excel(
 # ==============================================================================
 df_camion = check_relations('camion', df_camion, df_wilaya, 'id_wilaya')
 df_camion = check_relations('camion', df_camion, df_tipo_vehiculo, 'id_tipo_vehiculo')
+
+# ==============================================================================
+# taller
+# ==============================================================================
+df_taller = check_relations('taller', df_taller, df_wilaya, 'id_wilaya')
+df_taller = check_relations('taller', df_taller, df_tipo_taller, 'id_tipo_taller')
+
+# ==============================================================================
+# Cambiar NaN por None
+# ==============================================================================
+df_wilaya = df_wilaya.replace({np.NaN: None})
+df_taller = df_taller.replace({np.NaN: None})
+df_personal = df_personal.replace({np.NaN: None})
+df_averia = df_averia.replace({np.NaN: None})
+df_repuesto = df_repuesto.replace({np.NaN: None})
+df_frecuencia = df_frecuencia.replace({np.NaN: None})
+df_tipo_ot = df_tipo_ot.replace({np.NaN: None})
+df_tipo_producto = df_tipo_producto.replace({np.NaN: None})
+df_tipo_taller = df_tipo_taller.replace({np.NaN: None})
+df_tipo_vehiculo = df_tipo_vehiculo.replace({np.NaN: None})
 df_camion = df_camion.replace(
     {
         np.NaN: None,
         pd.NaT: None
     }
 )
-
-# ==============================================================================
-# camion
-# ==============================================================================
-df_taller = check_relations('taller', df_taller, df_wilaya, 'id_wilaya')
-df_taller = check_relations('taller', df_taller, df_tipo_taller, 'id_tipo_taller')
 
 # ==============================================================================
 # df.to_dict
@@ -204,6 +218,7 @@ except Exception as e:
     session.rollback()
 
 finally:
+    session.commit()
     # Cerrar la sesión
     session.close()
     dp.logger.info('Fin ETL Maestros')
