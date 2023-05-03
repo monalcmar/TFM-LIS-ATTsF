@@ -3,22 +3,5 @@ LOCAL:
         host: 'attsrabuni.ddns.net'
         db: 'AttsfTd'
 
-DEV:
-    database:
-        host: 'db_host'
-        db: 'db_name'
-
-    server:
-        ip: 'server_ip'
-
-PROD:
-    database:
-        host: 'db_host'
-        db: 'db_name'
-
-    server:
-        ip: 'server_ip'
-
-
 # EN EL CONFIG DEBERIA IR TODO LO QUE ES CONFIGURABLE, PERO LOS DATOS REALES
 # QUE VAYAN AL .ENV. EN EL CONFIG DEBERIAN IR LOS VALORES POR DEFECTO.

@@ -51,6 +51,9 @@ ultima_id_ot = session.query(Ot.id_ot).order_by(Ot.id_ot.desc()).first()[0]
 ot_ultima_fecha = session.query(Ot.ot).filter(Ot.fecha_inicio == ultima_fecha).all()
 
 
+session.close()
+
+
 # FUNCIONES
 def limpiar_capitalize(dataframe, columna):
     """
@@ -874,8 +877,12 @@ df_ot_agua_averia = df_ot_agua_averia.drop('averia', axis=1)
 # ######################################### OT REPUESTO ALIMENTO #########################################
 
 # Se crea la lista de repuestos
-df_tipo_repuesto = df_repuesto.drop('id_repuesto', axis=1)
-df_tipo_repuesto['repuesto'] = df_tipo_repuesto['repuesto'].str.lower()
+# df_tipo_repuesto = df_repuesto.drop('id_repuesto', axis=1)
+df_tipo_repuesto = pd.DataFrame({'repuesto': ['aceite motor', 'anticongelante', 'liquido de embrague', 'liquido direccion',
+                    'liquido de freno', 'agua destilada',  'aceite caja cambios', 'acido baterias',
+                    'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
+                    'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',
+                    'ruedas', 'lamparas', 'd/tacgfo',  's. lava', 'j. carroceria', 'calcho']})
 
 # Creamos una lista con los repuesto a quitar
 nombres_a_quitar = ['filtro de aceite', 'filtro de aire', 'filtro de gasoil',
@@ -911,15 +918,21 @@ df_ot_repuesto = df_ot_repuesto.drop('ot', axis=1)
 df_ot_repuesto['id_ot'] = df_ot_repuesto['id_ot'].astype(int)  # NO ES NECESARIO CREO
 
 # Merge repuesto
-df_ot_repuesto = pd.merge(df_ot_repuesto, df_repuesto, how='left', on='repuesto')
+df_ot_repuesto = pd.merge(df_ot_repuesto, df_repuesto.loc[:, ['id_repuesto', 'repuesto']], how='left', on='repuesto')
 # Se elimina la columna repuesto
 df_ot_repuesto = df_ot_repuesto.drop('repuesto', axis=1)
 
 # ######################################### OT REPUESTO AGUA #########################################
 
+# NO COGE LOS INT DE PRE-FILTRO DE GASOIL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# SOLUCIONADO EN EL OTRO (ATTSF)
+
 # Se crea la lista de repuestos
-df_tipo_repuesto_agua = df_repuesto.drop('id_repuesto', axis=1)
-df_tipo_repuesto_agua['repuesto'] = df_tipo_repuesto_agua['repuesto'].str.lower()
+df_tipo_repuesto_agua = pd.DataFrame({'repuesto': ['aceite motor', 'anticongelante', 'liquido de embrague', 'liquido direccion',
+                    'liquido de freno', 'agua destilada',  'aceite caja cambios', 'acido baterias',
+                    'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
+                    'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',
+                    'ruedas', 'lamparas', 'd/tacgfo',  's. lava', 'j. carroceria', 'calcho']})
 
 # Creamos una lista con los repuesto a quitar
 nombres_a_quitar_agua = ['calcho', 'd/tacgfo', 'j. carroceria', 'lamparas', 'ruedas', 's. lava']
@@ -953,7 +966,7 @@ df_ot_agua_repuesto = df_ot_agua_repuesto.drop('ot', axis=1)
 df_ot_agua_repuesto['id_ot'] = df_ot_agua_repuesto['id_ot'].astype(int)  # NO ES NECESARIO CREO
 
 # Merge repuesto
-df_ot_agua_repuesto = pd.merge(df_ot_agua_repuesto, df_repuesto, how='left', on='repuesto')
+df_ot_agua_repuesto = pd.merge(df_ot_agua_repuesto, df_repuesto.loc[:, ['id_repuesto', 'repuesto']], how='left', on='repuesto')
 # Se elimina la columna repuesto
 df_ot_agua_repuesto = df_ot_agua_repuesto.drop('repuesto', axis=1)
 
@@ -976,16 +989,18 @@ duplicados_repuestos = df_ot_repuesto_union[df_ot_repuesto_union.duplicated()]  
 # print(duplicados_repuestos)
 
 
-df_ot_union.to_csv(path_output / "BORRAROT.csv", index=False, encoding='utf-8')
-df_ot_averia_union.to_csv(path_output / "BORRARAVERIA.csv", index=False, encoding='utf-8')
-df_ot_agua_repuesto.to_csv(path_output / "BORRARREPUESTO.csv", index=False, encoding='utf-8')
+# df_ot_union.to_csv(path_output / "BORRAROT.csv", index=False, encoding='utf-8')
+# df_ot_averia_union.to_csv(path_output / "BORRARAVERIA.csv", index=False, encoding='utf-8')
+# df_ot_agua_repuesto.to_csv(path_output / "BORRARREPUESTO.csv", index=False, encoding='utf-8')
 
 # ######################################### DBEAVER #########################################
+
+# session = Session(engine)
 
 # df_ot.to_sql('tbl_ot', con=engine, if_exists='append', index=False)
 # df_ot_averia.to_sql('tbl_ot_averia', con=engine, if_exists='append', index=False)
 # df_ot_repuesto.to_sql('tbl_ot_repuesto', con=engine, if_exists='append', index=False)
 
-session.close()
+# session.close()
 
 logger.info('Fin ETL Ot')
