@@ -208,14 +208,14 @@ df_ot_prev['grasa'] = pasar_a_int(df_ot_prev, 'grasa')
 df_ot_prev['mecanico'].replace({'bol-la sidi azman': 'Bolla Sidi Azman',
                                 'brahim buyema leshan': 'Brahim Buyema Lehsan',
                                 'brahim hamdi salem': 'Brahim Hamdi',
-                                'hamdi moh lamin': None,
-                                'jefe taller': None,
                                 'mhamidi emhamed barahim': 'Mohamidi Emhamed Brahim',
                                 'mohamed salem mohamed': 'Mohamed Salem Mohamed Alamin',
                                 'mohamidy emhamed brahim': 'Mohamidi Emhamed Brahim',
-                                'mrabihrabu hamudi': None,
-                                'omar ahmed mohamed': None,
                                 'salek mohamed salem': 'Salec Mohamed Salem'}, inplace=True)
+# 'hamdi moh lamin': None,
+# 'jefe taller': None,
+# 'mrabihrabu hamudi': None,
+# 'omar ahmed mohamed': None,                         
 
 # Se resetea el index
 df_ot_prev.reset_index(inplace=True, drop=True)
@@ -312,26 +312,28 @@ df_ot_corr['maquinaria'] = pasar_a_int(df_ot_corr, 'maquinaria')
 # ---------------------------------------------
 # Se reemplazan los valores de mecanico
 df_ot_corr['mecanico'].replace({'abba hamdi': 'abba hamdi mohamed salem',
-                                'amar ahmed mohamed': None,
                                 'bol-la sidi azman': 'Bolla Sidi Azman',
                                 'brahim buyema leshan': 'Brahim Buyema Lehsan',
                                 'brahim hamdi salem': 'Brahim Hamdi',
-                                'hamdi + bel-la': None,
-                                'hamdi mohamed lamin': None,
-                                'j. taller': None,
                                 'jalil haced bahia': 'jalil hafed bahia',
-                                'jefe taller': None,
-                                'log,direccion': None,
-                                'logista': None,
-                                'mohamed lamin': None,
                                 'mohamed salem mohamed': 'mohamed salem mohamed alamin',
                                 'mohamidy emhamed brahim': 'mohamidi emhamed brahim',
-                                'mrabihrabu hamudi': None,
-                                'omar ahmed mohamed': None,
-                                'salek mohamed salem': 'salec mohamed salem',
-                                'sidati mahfud': None,
-                                'todos': None},
+                                'salek mohamed salem': 'salec mohamed salem'},
                                  inplace=True)
+
+# 'amar ahmed mohamed': None,
+# 'hamdi + bel-la': None,
+# 'hamdi mohamed lamin': None,
+# 'j. taller': None,
+# 'jefe taller': None,
+# 'log,direccion': None,
+# 'logista': None,
+# 'mohamed lamin': None,
+# 'mrabihrabu hamudi': None,
+# 'omar ahmed mohamed': None,
+# 'sidati mahfud': None,
+# 'todos': None
+
 
 # Se resetea el index por los valores eliminados
 df_ot_corr.reset_index(inplace=True, drop=True)
@@ -640,14 +642,14 @@ df_ot_agua_corr = df_ot_agua_corr.replace({'mecanico': {'Saleh': 'Saleh Mohamed 
                                                         'Laulad': 'Laulad Mohamed-Salem',
                                                         'Sidi alal': 'Sidi alal Brahim',
                                                         'Jatri mohamed': 'Jatri  Mohamed',
-                                                        'Todos': None,
-                                                        'Mec transporte ': None,
-                                                        'Conductor': None,
-                                                        'Lamni': None,
-                                                        'Mohamed': None,
                                                         'Moh lamin': 'Mohamed Lamin Mustafa',
                                                         'Ali salem': 'Alisalem Mohamed-Salem'}})
 
+# 'Todos': None,
+# 'Mec transporte ': None,
+# 'Conductor': None,
+# 'Lamni': None,
+# 'Mohamed': None,
 # ---------------------------------------------
 
 # Se resetea el index por los valores eliminados
@@ -878,11 +880,12 @@ df_ot_agua_averia = df_ot_agua_averia.drop('averia', axis=1)
 
 # Se crea la lista de repuestos
 # df_tipo_repuesto = df_repuesto.drop('id_repuesto', axis=1)
+
 df_tipo_repuesto = pd.DataFrame({'repuesto': ['aceite motor', 'anticongelante', 'liquido de embrague', 'liquido direccion',
-                    'liquido de freno', 'agua destilada',  'aceite caja cambios', 'acido baterias',
-                    'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
-                    'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',
-                    'ruedas', 'lamparas', 'd/tacgfo',  's. lava', 'j. carroceria', 'calcho']})
+                                              'liquido de freno', 'agua destilada', 'aceite caja cambios', 'acido baterias',
+                                              'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
+                                              'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',
+                                              'ruedas', 'lamparas', 'd/tacgfo', 's. lava', 'j. carroceria', 'calcho']})
 
 # Creamos una lista con los repuesto a quitar
 nombres_a_quitar = ['filtro de aceite', 'filtro de aire', 'filtro de gasoil',
@@ -929,10 +932,10 @@ df_ot_repuesto = df_ot_repuesto.drop('repuesto', axis=1)
 
 # Se crea la lista de repuestos
 df_tipo_repuesto_agua = pd.DataFrame({'repuesto': ['aceite motor', 'anticongelante', 'liquido de embrague', 'liquido direccion',
-                    'liquido de freno', 'agua destilada',  'aceite caja cambios', 'acido baterias',
-                    'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
-                    'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',
-                    'ruedas', 'lamparas', 'd/tacgfo',  's. lava', 'j. carroceria', 'calcho']})
+                                                   'liquido de freno', 'agua destilada', 'aceite caja cambios', 'acido baterias',
+                                                   'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
+                                                   'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',
+                                                   'ruedas', 'lamparas', 'd/tacgfo', 's. lava', 'j. carroceria', 'calcho']})
 
 # Creamos una lista con los repuesto a quitar
 nombres_a_quitar_agua = ['calcho', 'd/tacgfo', 'j. carroceria', 'lamparas', 'ruedas', 's. lava']
@@ -975,9 +978,6 @@ df_ot_agua_repuesto = df_ot_agua_repuesto.drop('repuesto', axis=1)
 # concat de ambos dataframes
 df_ot_repuesto_union = pd.concat([df_ot_repuesto, df_ot_agua_repuesto], axis=0)
 df_ot_averia_union = pd.concat([df_ot_averia, df_ot_agua_averia], axis=0)
-
-# quitar las filas cuya ot no tenga averia o repuesto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# MIRAR POR QUE PASA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 df_ot_repuesto_union.reset_index(inplace=True, drop=True)
 df_ot_averia_union.reset_index(inplace=True, drop=True)
