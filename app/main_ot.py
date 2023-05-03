@@ -51,10 +51,6 @@ ultima_id_ot = session.query(Ot.id_ot).order_by(Ot.id_ot.desc()).first()[0]
 ot_ultima_fecha = session.query(Ot.ot).filter(Ot.fecha_inicio == ultima_fecha).all()
 
 
-# ############################################################### FALTA ELIMINAR LAS FILAS DONDE LA FECHA Y OT COINCIDEN CON LA BASE DE DATOS
-# PARA ESO ACTUALIZAR DATOS HISTORICOS DE LA BASE DE DATOS (HE PASADO LAS OT A STR, ASI DEBERIA FUNCIONAR) SINO PASAR TODOS A INT Y LUEGO A STR
-
-
 # FUNCIONES
 def limpiar_capitalize(dataframe, columna):
     """
@@ -332,7 +328,7 @@ df_ot_corr['mecanico'].replace({'abba hamdi': 'abba hamdi mohamed salem',
                                 'salek mohamed salem': 'salec mohamed salem',
                                 'sidati mahfud': None,
                                 'todos': None},
-                                inplace=True)
+                                 inplace=True)
 
 # Se resetea el index por los valores eliminados
 df_ot_corr.reset_index(inplace=True, drop=True)
@@ -443,11 +439,10 @@ df_ot['id_mecanico'] = df_ot['id_mecanico'].replace({np.NaN: None}).astype("Int6
 
 df_ot.reset_index(inplace=True, drop=True)
 
-# Se reordenan las columnas 
+# Se reordenan las columnas
 df_ot = df_ot[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
                'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
                'descripcion_trabajo_realizado', 'observacion']]
-
 
 
 # ------------------------------------------------------------ AGUA ------------------------------------------------------------
@@ -528,9 +523,9 @@ df_ot_agua_prev['pre-filtro de gasoil'] = pasar_a_int(df_ot_agua_prev, 'pre-filt
 # ---------------------------------------------
 # Se reemplazan los valores de taller
 df_ot_agua_prev = df_ot_agua_prev.replace({'taller': {'ATC RABUNI': 'CLM', 'TR AAIUN': 'Aaiun',
-                                            'TR AUSERD': 'Auserd', 'TR BOUJDUR': 'Bojador',
-                                            'TR DAJLA': 'Dajla', 'TR SMARA': 'Smara',
-                                            'TR TRANSPORT': 'BDT'}})
+                                                      'TR AUSERD': 'Auserd', 'TR BOUJDUR': 'Bojador',
+                                                      'TR DAJLA': 'Dajla', 'TR SMARA': 'Smara',
+                                                      'TR TRANSPORT': 'BDT'}})
 
 # Se resetea el index
 df_ot_agua_prev.reset_index(inplace=True, drop=True)
@@ -555,16 +550,16 @@ df_ot_agua_prev['observacion'] = ''
 
 # Se define el dataframe de ot repuesto (se usara mas adelante)
 df_ot_agua_repuesto = df_ot_agua_prev[['ot', 'aceite motor', 'anticongelante', 'liquido de embrague',
-                             'liquido direccion', 'liquido de freno', 'agua destilada',
-                             'aceite caja cambios', 'acido baterias', 'grasa', 'filtro de aceite',
-                             'filtro de aire', 'filtro de gasoil', 'filtro hidraulico',
-                             'filtro separador de gasoil', 'pre-filtro de gasoil']]
+                                       'liquido direccion', 'liquido de freno', 'agua destilada',
+                                       'aceite caja cambios', 'acido baterias', 'grasa', 'filtro de aceite',
+                                       'filtro de aire', 'filtro de gasoil', 'filtro hidraulico',
+                                       'filtro separador de gasoil', 'pre-filtro de gasoil']]
 
 # Se toman las columnas deseadas
 df_ot_agua_prev = df_ot_agua_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
-                         'mecanico', 'fecha_inicio', 'fecha_fin',
-                         'descripcion_trabajo_solicitado',
-                         'descripcion_trabajo_realizado', 'observacion']]
+                                   'mecanico', 'fecha_inicio', 'fecha_fin',
+                                   'descripcion_trabajo_solicitado',
+                                   'descripcion_trabajo_realizado', 'observacion']]
 
 
 # ######################################### CORRECTIVO #########################################
@@ -619,9 +614,9 @@ df_ot_agua_corr['elec, vehiculos'] = pasar_a_int(df_ot_agua_corr, 'elec, vehicul
 # ---------------------------------------------
 # Se reemplazan los valores de taller
 df_ot_agua_corr = df_ot_agua_corr.replace({'taller': {'ATC RABUNI': 'CLM', 'TR AAIUN': 'Aaiun',
-                                            'TR AUSERD': 'Auserd', 'TR BOUJDUR': 'Bojador',
-                                            'TR DAJLA': 'Dajla', 'TR SMARA': 'Smara',
-                                            'TR TRANSPORT': 'BDT'}})
+                                                      'TR AUSERD': 'Auserd', 'TR BOUJDUR': 'Bojador',
+                                                      'TR DAJLA': 'Dajla', 'TR SMARA': 'Smara',
+                                                      'TR TRANSPORT': 'BDT'}})
 
 # ---------------------------------------------
 # Crear una columna de frecuencia = 'No frecuencia'
@@ -633,22 +628,22 @@ df_ot_agua_corr['tipo_ot'] = 'Correctivo'
 # REVISAR LOS MECANICOS CAMBIADOS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Se reemplazan los nombres de los mecanicos
 df_ot_agua_corr = df_ot_agua_corr.replace({'mecanico': {'Saleh': 'Saleh Mohamed Salma',
-                                              'Mohamed lamin': 'Mohamed Lamin Hussein',
-                                              'Bal-lal hammu': 'Bel-lal Hammu',
-                                              'Ahmed salek andal': 'Ahmed Salec',
-                                              'Salek ali': 'Salec Ali',
-                                              'Ali': 'Ali Eluali',
-                                              'Mohamed abdalahi': 'Mohamed-Abdalahe Mohamed-Bachir',
-                                              'Laulad': 'Laulad Mohamed-Salem',
-                                              'Sidi alal': 'Sidi alal Brahim',
-                                              'Jatri mohamed': 'Jatri  Mohamed',
-                                              'Todos': None,
-                                              'Mec transporte ': None,
-                                              'Conductor': None,
-                                              'Lamni': None,
-                                              'Mohamed': None,
-                                              'Moh lamin': 'Mohamed Lamin Mustafa',
-                                              'Ali salem': 'Alisalem Mohamed-Salem'}})
+                                                        'Mohamed lamin': 'Mohamed Lamin Hussein',
+                                                        'Bal-lal hammu': 'Bel-lal Hammu',
+                                                        'Ahmed salek andal': 'Ahmed Salec',
+                                                        'Salek ali': 'Salec Ali',
+                                                        'Ali': 'Ali Eluali',
+                                                        'Mohamed abdalahi': 'Mohamed-Abdalahe Mohamed-Bachir',
+                                                        'Laulad': 'Laulad Mohamed-Salem',
+                                                        'Sidi alal': 'Sidi alal Brahim',
+                                                        'Jatri mohamed': 'Jatri  Mohamed',
+                                                        'Todos': None,
+                                                        'Mec transporte ': None,
+                                                        'Conductor': None,
+                                                        'Lamni': None,
+                                                        'Mohamed': None,
+                                                        'Moh lamin': 'Mohamed Lamin Mustafa',
+                                                        'Ali salem': 'Alisalem Mohamed-Salem'}})
 
 # ---------------------------------------------
 
@@ -657,13 +652,13 @@ df_ot_agua_corr.reset_index(inplace=True, drop=True)
 
 # Se define el dataframe de ot averia (se usara mas adelante)
 df_ot_agua_averia = df_ot_agua_corr[['ot', 'chasis', 'carroceria', 'ruedas',
-                           'mecanica', 'elec, vehiculos']]
+                                     'mecanica', 'elec, vehiculos']]
 
 # Se toman las columnas deseadas
 df_ot_agua_corr = df_ot_agua_corr[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
-                         'mecanico', 'fecha_inicio', 'fecha_fin',
-                         'descripcion_trabajo_solicitado',
-                         'descripcion_trabajo_realizado', 'observacion']]
+                                   'mecanico', 'fecha_inicio', 'fecha_fin',
+                                   'descripcion_trabajo_solicitado',
+                                   'descripcion_trabajo_realizado', 'observacion']]
 
 
 # ######################################### UNION #########################################
@@ -673,8 +668,8 @@ df_ot_agua = pd.concat([df_ot_agua_corr, df_ot_agua_prev], axis=0)
 
 # Se toman las columnas deseadas
 df_ot_agua = df_ot_agua[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller', 'mecanico',
-               'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
-               'descripcion_trabajo_realizado', 'observacion']]
+                         'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
+                         'descripcion_trabajo_realizado', 'observacion']]
 
 # Se quitan los indices anteriores ya que se repiten cada anho
 df_ot_agua.reset_index(inplace=True, drop=True)
@@ -737,7 +732,7 @@ df_ot_agua = df_ot_agua[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_t
                          'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
                          'descripcion_trabajo_realizado', 'observacion']]
 
-# -----------------------------------------------------------------------------------------------------------------------------
+
 # ------------------------------------------------------------ UNION OTS ------------------------------------------------------------
 # Concat de ambos dataframes
 df_ot_union = pd.concat([df_ot, df_ot_agua], axis=0)
@@ -874,7 +869,7 @@ df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_averia, how='left', on='averi
 # Se elimina la columna averia
 df_ot_agua_averia = df_ot_agua_averia.drop('averia', axis=1)
 
-# ------------------------------------------------------------ OT REPUSTO ------------------------------------------------------------
+# ------------------------------------------------------------ OT REPUESTO ------------------------------------------------------------
 
 # ######################################### OT REPUESTO ALIMENTO #########################################
 
@@ -962,28 +957,28 @@ df_ot_agua_repuesto = pd.merge(df_ot_agua_repuesto, df_repuesto, how='left', on=
 # Se elimina la columna repuesto
 df_ot_agua_repuesto = df_ot_agua_repuesto.drop('repuesto', axis=1)
 
-# ------------------------------------------------------------ UNION OT AVERIA/REPUESTO ------------------------------------------------------------
+# # ----------------------------------------- UNION OT AVERIA/REPUESTO -----------------------------------------
 
 # concat de ambos dataframes
 df_ot_repuesto_union = pd.concat([df_ot_repuesto, df_ot_agua_repuesto], axis=0)
 df_ot_averia_union = pd.concat([df_ot_averia, df_ot_agua_averia], axis=0)
 
-#quitar las filas cuya ot no tenga averia o repuesto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# quitar las filas cuya ot no tenga averia o repuesto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# MIRAR POR QUE PASA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 df_ot_repuesto_union.reset_index(inplace=True, drop=True)
 df_ot_averia_union.reset_index(inplace=True, drop=True)
 
-duplicados_averias = df_ot_averia_union[df_ot_averia_union.duplicated()] # 0
-duplicados_repuestos = df_ot_repuesto_union[df_ot_repuesto_union.duplicated()] # 0
+duplicados_averias = df_ot_averia_union[df_ot_averia_union.duplicated()]  # 0
+duplicados_repuestos = df_ot_repuesto_union[df_ot_repuesto_union.duplicated()]  # 0
 
 # print(duplicados_averias)
 # print(duplicados_repuestos)
 
 
-
 df_ot_union.to_csv(path_output / "BORRAROT.csv", index=False, encoding='utf-8')
 df_ot_averia_union.to_csv(path_output / "BORRARAVERIA.csv", index=False, encoding='utf-8')
-df_ot_repuesto_union.to_csv(path_output / "BORRARREPUESTO.csv", index=False, encoding='utf-8')
+df_ot_agua_repuesto.to_csv(path_output / "BORRARREPUESTO.csv", index=False, encoding='utf-8')
 
 # ######################################### DBEAVER #########################################
 
