@@ -48,7 +48,8 @@ df_wilaya = pd.read_sql(session.query(Wilaya).statement, conn)
 ultima_fecha = session.query(Ot.fecha_inicio).filter(Ot.fecha_inicio != None).order_by(Ot.fecha_inicio.desc()).first()[0]
 ultima_id_ot = session.query(Ot.id_ot).order_by(Ot.id_ot.desc()).first()[0]
 # Se toman las ots que tienen la ultima fecha
-
+# fecha_str = '2023-01-30'
+# ultima_fecha = pd.to_datetime(fecha_str)
 ot_ultima_fecha = session.query(Ot.ot).filter(Ot.fecha_inicio == ultima_fecha).all()
 
 print(ultima_fecha)
