@@ -48,11 +48,8 @@ df_wilaya = pd.read_sql(session.query(Wilaya).statement, conn)
 ultima_fecha = session.query(Ot.fecha_inicio).filter(Ot.fecha_inicio != None).order_by(Ot.fecha_inicio.desc()).first()[0]
 ultima_id_ot = session.query(Ot.id_ot).order_by(Ot.id_ot.desc()).first()[0]
 # Se toman las ots que tienen la ultima fecha
-# fecha_str = '2023-01-30'
-# ultima_fecha = pd.to_datetime(fecha_str)
-ot_ultima_fecha = session.query(Ot.ot).filter(Ot.fecha_inicio == ultima_fecha).all()
-
-print(ultima_fecha)
+# ot_ultima_fecha = session.query(Ot.ot).filter(Ot.fecha_inicio == ultima_fecha).all()
+ot_ultima_fecha = [ot[0] for ot in session.query(Ot.ot).filter(Ot.fecha_inicio == ultima_fecha).all()]
 
 session.close()
 
@@ -771,7 +768,7 @@ df_ot_union.reset_index(inplace=True, drop=True)
 # ######################################### OT COMPROBAR FECHA #########################################
 
 # Se elimina la fila cuya ot es ultima_ot y fecha es ultima_fecha
-df_ot_union = df_ot_union.drop(df_ot_union[(df_ot_union['fecha_inicio'] == ultima_fecha) & (df_ot_union['ot'].isin(ot_ultima_fecha[0]))].index)
+df_ot_union = df_ot_union.drop(df_ot_union[(df_ot_union['fecha_inicio'] == ultima_fecha) & (df_ot_union['ot'].isin(ot_ultima_fecha))].index)
 
 # Ordenar por fecha
 df_ot_union = df_ot_union.sort_values(by='fecha_inicio')
@@ -840,6 +837,10 @@ df_ot_averia['averia'] = limpiar_capitalize(df_ot_averia, 'averia')
 df_ot_averia = pd.merge(df_ot_averia, df_ot_alimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
 # Se elimina la columna ot
 df_ot_averia = df_ot_averia.drop('ot', axis=1)
+# Como todos los id_ot nan estan en df_nocamiones esas ots no pertenecen a los camiones
+# hay averias que no tienen ot porque se han quitado las instalaciones en la columna 'camion'
+df_ot_averia.dropna(subset=['id_ot'], inplace=True) 
+df_ot_averia['id_ot'] = df_ot_averia['id_ot'].astype(int)
 
 # Merge averia
 df_ot_averia = pd.merge(df_ot_averia, df_averia, how='left', on='averia')
@@ -934,6 +935,10 @@ df_ot_repuesto = df_ot_repuesto.drop('ot', axis=1)
 df_ot_repuesto = pd.merge(df_ot_repuesto, df_repuesto.loc[:, ['id_repuesto', 'repuesto']], how='left', on='repuesto')
 # Se elimina la columna repuesto
 df_ot_repuesto = df_ot_repuesto.drop('repuesto', axis=1)
+# Como todos los id_ot nan estan en df_nocamiones esas ots no pertenecen a los camiones
+# hay averias que no tienen ot porque se han quitado las instalaciones en la columna 'camion'
+df_ot_repuesto.dropna(subset=['id_ot'], inplace=True)
+df_ot_repuesto['id_ot'] = df_ot_repuesto['id_ot'].astype(int)
 
 # ######################################### OT REPUESTO AGUA #########################################
 
