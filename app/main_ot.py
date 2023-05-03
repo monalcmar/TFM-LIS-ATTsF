@@ -989,9 +989,9 @@ duplicados_repuestos = df_ot_repuesto_union[df_ot_repuesto_union.duplicated()]  
 # print(duplicados_repuestos)
 
 
-df_ot_union.to_csv(path_output / "BORRAROT.csv", index=False, encoding='utf-8')
-df_ot_averia_union.to_csv(path_output / "BORRARAVERIA.csv", index=False, encoding='utf-8')
-df_ot_agua_repuesto.to_csv(path_output / "BORRARREPUESTO.csv", index=False, encoding='utf-8')
+# df_ot_union.to_csv(path_output / "BORRAROT.csv", index=False, encoding='utf-8')
+# df_ot_averia_union.to_csv(path_output / "BORRARAVERIA.csv", index=False, encoding='utf-8')
+# df_ot_agua_repuesto.to_csv(path_output / "BORRARREPUESTO.csv", index=False, encoding='utf-8')
 
 # ######################################### DBEAVER #########################################
 
