@@ -206,5 +206,5 @@ except Exception as e:
 finally:
     # Cerrar la sesión
     session.close()
+    dp.logger.info('Fin ETL Maestros')
 
-dp.logger.info('Fin ETL Maestros')
