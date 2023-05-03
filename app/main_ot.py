@@ -19,11 +19,14 @@ from models.model import Personal
 from models.model import Camion
 from models.model import Ot
 from models.model import Wilaya
+from utils.functions import columnas_texto
+from utils.functions import asociar_wilaya_taller
+from utils.functions import pasar_a_int
+from utils.functions import replace_camion
 
 
 path_input = dp.rootFolder / 'data' / '2023'
 path_output = dp.rootFolder / 'data' / 'processed'
-
 
 logger = logger()
 
@@ -52,94 +55,6 @@ ultima_id_ot = session.query(Ot.id_ot).order_by(Ot.id_ot.desc()).first()[0]
 ot_ultima_fecha = [ot[0] for ot in session.query(Ot.ot).filter(Ot.fecha_inicio == ultima_fecha).all()]
 
 session.close()
-
-
-# FUNCIONES
-def limpiar_capitalize(columna):
-    """
-    Limpia el texto.
-
-    Quita los espacios de adelante y atras y lo pasa
-    a capitalize.
-    """
-    cadena_capitalize = columna.str.strip().str.capitalize()
-    return cadena_capitalize
-
-
-def limpiar_upper(columna):
-    """
-    Limpia el texto.
-
-    Quita los espacios de adelante y atras y lo pasa
-    a upper.
-    """
-    cadena_upper = columna.str.strip().str.upper()
-    return cadena_upper
-
-
-def limpiar_lower(columna):
-    """
-    Limpia el texto.
-
-    Quita los espacios de adelante y atras y lo pasa
-    a lower.
-    """
-    cadena_lower = columna.str.strip().str.lower()
-    return cadena_lower
-
-
-def limpiar_title(columna):
-    """
-    Limpia el texto.
-
-    Quita los espacios de adelante y atras y lo pasa
-    a title.
-    """
-    cadena_title = columna.str.strip().str.title()
-    return cadena_title
-
-
-def asociar_wilaya_taller(fila):
-    """
-    Asocia un taller a una ot.
-
-    A partir de la wilaya asociada a un camion
-    asocia el taller correspondiente.
-    """
-    if ((fila['wilaya'] != 'No Wilaya') and (fila['wilaya'] != 'Rabouni')):
-        return fila['wilaya']
-    elif ((fila['wilaya'] == 'No Wilaya') or (fila['wilaya'] == 'Rabouni' and fila['id_tipo_vehiculo'] == 3)):
-        return 'BDT'
-    else:
-        return 'CLM'
-
-
-def pasar_a_int(dataframe, columna):
-    """
-    Para Repuestos y Averias.
-
-    Pasar una columna con Nan a int.
-    """
-    if dataframe[columna].empty:
-        return dataframe[columna]
-    else:
-        # Reemplazar espacios por None
-        dataframe[columna] = dataframe[columna].replace(r'^\s*$', np.nan, regex=True)
-        dataframe[columna] = dataframe[columna].replace({np.nan: None})
-        # Convertir a tipo Int64
-        return dataframe[columna].astype("Int64")
-
-
-# Funcion para reemplazarlo por CA
-def replace_camion(match):
-    """
-    Replace.
-
-    Tomar los Camion y
-    reemplazarlo por CA.
-    """
-    return f"CA{match.group(1)}"
-
 
 # ------------------------------------------------------------ ALIMENTOS ------------------------------------------------------------
 # ######################################### PREVENTIVO #########################################
@@ -181,13 +96,13 @@ df_ot_prev['frecuencia'] = df_ot_prev['frecuencia'].fillna('No frecuencia')
 # ---------------------------------------------
 # Se limpian los datos
 df_ot_prev['ot'] = df_ot_prev['ot'].astype(str)
-df_ot_prev['ot'] = limpiar_upper(df_ot_prev['ot'])
+df_ot_prev['ot'] = columnas_texto(df_ot_prev['ot'], "upper")
 
-df_ot_prev['camion'] = limpiar_upper(df_ot_prev['camion'])
+df_ot_prev['camion'] = columnas_texto(df_ot_prev['camion'], "upper")
 
-df_ot_prev['mecanico'] = limpiar_lower(df_ot_prev['mecanico'])
+df_ot_prev['mecanico'] = columnas_texto(df_ot_prev['mecanico'], "lower")
 
-df_ot_prev['frecuencia'] = limpiar_capitalize(df_ot_prev['frecuencia'])
+df_ot_prev['frecuencia'] = columnas_texto(df_ot_prev['frecuencia'], "capitalize")
 
 columnas_repuestos = ['aceite motor', 'anticongelante', 'liquido de embrague',
                       'liquido direccion', 'acido baterias', 'liquido de freno',
@@ -286,19 +201,19 @@ df_ot_corr.dropna(subset=['fecha_inicio'], inplace=True)
 # ---------------------------------------------
 # Se limpian los datos
 df_ot_corr['ot'] = df_ot_corr['ot'].astype(str)
-df_ot_corr['ot'] = limpiar_upper(df_ot_corr['ot'])
+df_ot_corr['ot'] = columnas_texto(df_ot_corr['ot'], "upper")
 
-df_ot_corr['camion'] = limpiar_upper(df_ot_corr['camion'])
+df_ot_corr['camion'] = columnas_texto(df_ot_corr['camion'], "upper")
 
-df_ot_corr['mecanico'] = limpiar_capitalize(df_ot_corr['mecanico'])
+df_ot_corr['mecanico'] = columnas_texto(df_ot_corr['mecanico'], "capitalize")
 
 df_ot_corr['taller'] = ''
 
-df_ot_corr['descripcion_trabajo_solicitado'] = limpiar_capitalize(df_ot_corr['descripcion_trabajo_solicitado'])
+df_ot_corr['descripcion_trabajo_solicitado'] = columnas_texto(df_ot_corr['descripcion_trabajo_solicitado'], "capitalize")
 
-df_ot_corr['descripcion_trabajo_realizado'] = limpiar_capitalize(df_ot_corr['descripcion_trabajo_realizado'])
+df_ot_corr['descripcion_trabajo_realizado'] = columnas_texto(df_ot_corr['descripcion_trabajo_realizado'], "capitalize")
 
-df_ot_corr['observacion'] = limpiar_capitalize(df_ot_corr['observacion'])
+df_ot_corr['observacion'] = columnas_texto(df_ot_corr['observacion'], "capitalize")
 
 columnas_averias = ['chasis', 'carroceria', 'ruedas', 'elec, vehiculos', 'obra civil',
                     'agua y combustible', 'herramientas', 'informatica', 'exteriores',
@@ -504,13 +419,13 @@ df_ot_agua_prev['frecuencia'] = df_ot_agua_prev['frecuencia'].fillna('No frecuen
 # ---------------------------------------------
 # Se limpian los datos
 df_ot_agua_prev['ot'] = df_ot_agua_prev['ot'].astype(str)
-df_ot_agua_prev['ot'] = limpiar_upper(df_ot_agua_prev['ot'])
+df_ot_agua_prev['ot'] = columnas_texto(df_ot_agua_prev['ot'], "upper")
 
-df_ot_agua_prev['camion'] = limpiar_upper(df_ot_agua_prev['camion'])
+df_ot_agua_prev['camion'] = columnas_texto(df_ot_agua_prev['camion'], "upper")
 
-df_ot_agua_prev['taller'] = limpiar_upper(df_ot_agua_prev['taller'])
+df_ot_agua_prev['taller'] = columnas_texto(df_ot_agua_prev['taller'], "upper")
 
-df_ot_agua_prev['frecuencia'] = limpiar_capitalize(df_ot_agua_prev['frecuencia'])
+df_ot_agua_prev['frecuencia'] = columnas_texto(df_ot_agua_prev['frecuencia'], "capitalize")
 
 # df_ot_agua_prev['coste'] = df_ot_agua_prev['coste'].astype(float)
 
@@ -610,17 +525,17 @@ df_ot_agua_corr.dropna(subset=['fecha_inicio'], inplace=True)
 # ---------------------------------------------
 # Se limpian los datos
 df_ot_agua_corr['ot'] = df_ot_agua_corr['ot'].astype(str)
-df_ot_agua_corr['ot'] = limpiar_upper(df_ot_agua_corr['ot'])
+df_ot_agua_corr['ot'] = columnas_texto(df_ot_agua_corr['ot'], "upper")
 
-df_ot_agua_corr['camion'] = limpiar_upper(df_ot_agua_corr['camion'])
+df_ot_agua_corr['camion'] = columnas_texto(df_ot_agua_corr['camion'], "upper")
 
-df_ot_agua_corr['mecanico'] = limpiar_capitalize(df_ot_agua_corr['mecanico'])
+df_ot_agua_corr['mecanico'] = columnas_texto(df_ot_agua_corr['mecanico'], "capitalize")
 
-df_ot_agua_corr['descripcion_trabajo_solicitado'] = limpiar_capitalize(df_ot_agua_corr['descripcion_trabajo_solicitado'])
+df_ot_agua_corr['descripcion_trabajo_solicitado'] = columnas_texto(df_ot_agua_corr['descripcion_trabajo_solicitado'], "capitalize")
 
-df_ot_agua_corr['descripcion_trabajo_realizado'] = limpiar_capitalize(df_ot_agua_corr['descripcion_trabajo_realizado'])
+df_ot_agua_corr['descripcion_trabajo_realizado'] = columnas_texto(df_ot_agua_corr['descripcion_trabajo_realizado'], "capitalize")
 
-df_ot_agua_corr['observacion'] = limpiar_capitalize(df_ot_agua_corr['observacion'])
+df_ot_agua_corr['observacion'] = columnas_texto(df_ot_agua_corr['observacion'], "capitalize")
 
 columnas_averias = ['chasis', 'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos']
 df_ot_agua_corr['chasis'] = pasar_a_int(df_ot_agua_corr, 'chasis')
@@ -835,7 +750,7 @@ df_ot_averia = pd.melt(
 ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'averia'})
 
 # Se limpian los datos
-df_ot_averia['averia'] = limpiar_capitalize(df_ot_averia['averia'])
+df_ot_averia['averia'] = columnas_texto(df_ot_averia['averia'], "capitalize")
 
 # Merge ot
 df_ot_averia = pd.merge(df_ot_averia, df_ot_alimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
@@ -879,7 +794,7 @@ df_ot_agua_averia = pd.melt(
 ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'averia'})
 
 # Se limpian los datos
-df_ot_agua_averia['averia'] = limpiar_capitalize(df_ot_agua_averia['averia'])
+df_ot_agua_averia['averia'] = columnas_texto(df_ot_agua_averia['averia'], "capitalize")
 
 # Merge ot
 df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_ot_noalimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
@@ -928,7 +843,7 @@ df_ot_repuesto = pd.melt(
 ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'repuesto'})
 
 # Se limpian los datos
-df_ot_repuesto['repuesto'] = limpiar_capitalize(df_ot_repuesto['repuesto'])
+df_ot_repuesto['repuesto'] = columnas_texto(df_ot_repuesto['repuesto'], "capitalize")
 
 # Merge ot
 df_ot_repuesto = pd.merge(df_ot_repuesto, df_ot_alimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
@@ -975,7 +890,7 @@ df_ot_agua_repuesto = pd.melt(
 ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'repuesto'})
 
 # Se limpian los datos
-df_ot_agua_repuesto['repuesto'] = limpiar_capitalize(df_ot_agua_repuesto['repuesto'])
+df_ot_agua_repuesto['repuesto'] = columnas_texto(df_ot_agua_repuesto['repuesto'], "capitalize")
 
 # Merge ot
 df_ot_agua_repuesto = pd.merge(df_ot_agua_repuesto, df_ot_noalimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
