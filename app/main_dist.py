@@ -23,15 +23,21 @@ logger = logger()
 
 logger.info('Inicio ETL Distribucion')
 
-# función para gestión de celdas de texto
+# Funcion que formatea columnas de texto
 
 
-def columnas_texto_title(columna):
-    """Da formato a las columnas de tipo texto en la que cada parabla tenga
-
-    que comenzar con una letra mayúscula.
+def columnas_texto(columna, formato):
     """
-    columna = columna.str.title()
+    Funcion que da formato a las columnas de texto (upper / title / capitalize).
+
+    Quita espación en blanco al inicio y al final.
+    """
+    if formato == "capitalize":
+        columna = columna.str.capitalize()
+    if formato == "upper":
+        columna = columna.str.upper()
+    else:
+        columna = columna.str.title()
     columna = columna.str.lstrip()
     columna = columna.str.rstrip()
     return (columna)
@@ -46,6 +52,7 @@ df_camion = pd.read_sql(session.query(Camion).statement, con=conn)
 df_wilaya = pd.read_sql(session.query(Wilaya).statement, con=conn)
 df_tipo_producto = pd.read_sql(session.query(Tipo_producto).statement, con=conn)
 df_tipo_vehiculo = pd.read_sql(session.query(Tipo_vehiculo).statement, con=conn)
+df_distribucion = pd.read_sql(session.query(Distribucion).statement, con=conn)
 # print(df_tipo_vehiculo)
 
 # ===== Obtener el último registro ¿en función de la fecha o del id_distribución? =====
@@ -54,12 +61,14 @@ ultimo_registro_distribucion = session.query(Distribucion).order_by(Distribucion
                                                                     Distribucion.id_distribucion.desc()).first()
 ultimo_id_distribucion = ultimo_registro_distribucion.id_distribucion
 ultimo_salida_fecha_hora = ultimo_registro_distribucion.salida_fecha_hora
+ultimo_no_serie = ultimo_registro_distribucion.no_serie
 
 session.close()
 
 # imprimir ultima fecha y último indice
 print(ultimo_id_distribucion)
 print(ultimo_salida_fecha_hora)
+print(ultimo_no_serie)
 
 # ===== Cargar nuevos datos =====
 # crear path de origen de nuevos datos
@@ -87,18 +96,20 @@ df_distribucion_nuevos['llegada_fecha_hora'] = pd.to_datetime(df_distribucion_nu
 df_distribucion_nuevos['llegada_fecha_hora'] = pd.to_datetime(df_distribucion_nuevos['llegada_fecha_hora'], format='%Y-%m-%d %H:%M:%S')
 df_distribucion_nuevos['salida_fecha_hora'] = pd.to_datetime(df_distribucion_nuevos['salida_fecha_hora'], format='%Y-%m-%d %H:%M:%S')
 
-# gestion columnas de texto 
-df_distribucion_nuevos['conductor'] = columnas_texto_title(df_distribucion_nuevos['conductor'])
-df_distribucion_nuevos['wilaya'] = columnas_texto_title(df_distribucion_nuevos['wilaya'])
-
-# generación de merges de nuevos datos con los maestros
-df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_conductor[['id_conductor', 'conductor']], how='left', on='conductor')
-df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_camion[['id_camion', 'nombre_attsf']], how='left', on='nombre_attsf')
-df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_tipo_producto[['id_tipo_producto', 'tipo_producto']], how='left', on='tipo_producto')
-df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_wilaya[['id_wilaya', 'wilaya']], how='left', on='wilaya')
+# gestion columnas de texto
+df_distribucion_nuevos['conductor'] = columnas_texto(df_distribucion_nuevos['conductor'], 'title')
+df_distribucion_nuevos['wilaya'] = columnas_texto(df_distribucion_nuevos['wilaya'], 'title')
+df_distribucion_nuevos['nombre_attsf'] = columnas_texto(df_distribucion_nuevos['nombre_attsf'], 'upper')
+df_distribucion_nuevos['tipo_producto'] = columnas_texto(df_distribucion_nuevos['tipo_producto'], 'upper')
 
 # nos quedamos solo con los datos a partir de la última fecha y hora de registro
 df_distribucion_nuevos = df_distribucion_nuevos[df_distribucion_nuevos['salida_fecha_hora'] >= ultimo_salida_fecha_hora]  # no se como podría no haber errores con el criterio
+
+# generación de merges de nuevos datos con los maestros
+df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_personal[['id_personal', 'nombre']], how='left', left_on='conductor', right_on='nombre')
+df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_camion[['id_camion', 'nombre_attsf']], how='left', on='nombre_attsf')
+df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_tipo_producto[['id_tipo_producto', 'tipo_producto']], how='left', on='tipo_producto')
+df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_wilaya[['id_wilaya', 'wilaya']], how='left', on='wilaya')
 
 # reconstrucción de dataframe de nuevos datos
 d_distribucion_nuevos = {'id_conductor': df_distribucion_nuevos['id_conductor'],
@@ -109,6 +120,20 @@ d_distribucion_nuevos = {'id_conductor': df_distribucion_nuevos['id_conductor'],
                          'km_totales': df_distribucion_nuevos['km_totales'], 'tm': df_distribucion_nuevos['tm'],
                          'incidencias': df_distribucion_nuevos['incidencias'], 'observaciones': df_distribucion_nuevos['observaciones']}
 df_distribucion_nuevos = pd.DataFrame(d_distribucion_nuevos)
+
+# comprobar las fechas iguales a la última fecha
+df_distribucion_fecha_igual = df_distribucion[(df_distribucion['salida_fecha_hora'] == ultimo_salida_fecha_hora)]
+df_distribucion_fecha_igual = df_distribucion_fecha_igual.drop("id_distribucion", axis=1)
+
+# Bucle para comparar se la alguna de las filas de fechas igual son identicas a las filas
+for index1, row1 in df_distribucion_nuevos.iterrows():
+    if df_distribucion_nuevos.loc[index1, "salida_fecha_hora"] == ultimo_salida_fecha_hora:
+        # print(df_distribucion_nuevos.loc[index1, 'no_serie'])
+        for index2, row2 in df_distribucion_fecha_igual.iterrows():
+            if row1.equals(row2):
+                df_distribucion_nuevos = df_distribucion_nuevos.drop(index1, axis=0)
+            # else:
+            # print('La fila ', index1, 'no es igual')
 
 # ===== modificar los indices =====
 
