@@ -97,17 +97,8 @@ df_taller = check_relations('taller', df_taller, df_tipo_taller, 'id_tipo_taller
 # ==============================================================================
 # capitalize_df()
 # ==============================================================================
-df_wilaya = capitalize_df(df_wilaya)
-df_taller = capitalize_df(df_taller)
-df_personal = capitalize_df(df_personal)
 df_averia = capitalize_df(df_averia)
 df_repuesto = capitalize_df(df_repuesto)
-df_frecuencia = capitalize_df(df_frecuencia)
-df_tipo_ot = capitalize_df(df_tipo_ot)
-df_tipo_producto = capitalize_df(df_tipo_producto)
-df_tipo_taller = capitalize_df(df_tipo_taller)
-df_tipo_vehiculo = capitalize_df(df_tipo_vehiculo)
-df_camion = capitalize_df(df_camion)
 
 # ==============================================================================
 # Cambiar NaN por None
