@@ -62,10 +62,11 @@ path_input_nuevos = dp.rootFolder / 'data' / 'nuevos_datos'
 # Leer datos nuevos TENIENDO EN CUENTA QUE ESTE SEA EL FORMATO
 
 file_name = 'bbdd_distribucion.xlsx'
+sheet_name = busqueda_hoja(file_name=file_name)
 
 df_distribucion_nuevos = pd.read_excel(
     path_input_nuevos / file_name,
-    sheet_name='base  datos 2024',  # optimizar búsqueda de hoja
+    sheet_name=sheet_name,  # optimizar búsqueda de hoja
     usecols='A, B, C, D, E, F, G, I, J, K, L, M, N, AC, AD',
     names=['no_serie', 'conductor', 'nombre_attsf', 'fecha_salida', 'hora_salida', 
            'fecha_llegada', 'hora_llegada', 'km_salida', 'km_llegada', 'km_totales',
@@ -129,6 +130,7 @@ df_distribucion_nuevos = df_distribucion_nuevos[df_distribucion_nuevos.isin(df_d
 df_distribucion_nuevos.index += (ultimo_id_distribucion + 1)
 df_distribucion_nuevos = df_distribucion_nuevos.reset_index(names='id_distribucion')
 df_distribucion_nuevos
+print(df_distribucion_nuevos)
 
 # ===== volcar nuevos datos en el servidor SQL =====
 
