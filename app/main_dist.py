@@ -53,7 +53,6 @@ df_wilaya = pd.read_sql(session.query(Wilaya).statement, con=conn)
 df_tipo_producto = pd.read_sql(session.query(Tipo_producto).statement, con=conn)
 df_tipo_vehiculo = pd.read_sql(session.query(Tipo_vehiculo).statement, con=conn)
 df_distribucion = pd.read_sql(session.query(Distribucion).statement, con=conn)
-# print(df_tipo_vehiculo)
 
 # ===== Obtener el último registro ¿en función de la fecha o del id_distribución? =====
 
@@ -71,13 +70,15 @@ print(ultimo_salida_fecha_hora)
 print(ultimo_no_serie)
 
 # ===== Cargar nuevos datos =====
+
 # crear path de origen de nuevos datos
 path_input_nuevos = dp.rootFolder / 'data' / 'nuevos_datos'
 
 # ===== Hacer merge de los nuevos datos con los maestros =====
+
 # Leer datos nuevos TENIENDO EN CUENTA QUE ESTE SEA EL FORMATO
 
-for file_name in os.listdir(path_input_nuevos):
+for file_name in os.listdir(path_input_nuevos): # quitar bucle
     if file_name.endswith('.xlsx'):  # comprobar si el archivo es un archivo de Excel
         df_distribucion_nuevos = pd.read_excel(
             path_input_nuevos / file_name,
@@ -103,7 +104,7 @@ df_distribucion_nuevos['nombre_attsf'] = columnas_texto(df_distribucion_nuevos['
 df_distribucion_nuevos['tipo_producto'] = columnas_texto(df_distribucion_nuevos['tipo_producto'], 'upper')
 
 # nos quedamos solo con los datos a partir de la última fecha y hora de registro
-df_distribucion_nuevos = df_distribucion_nuevos[df_distribucion_nuevos['salida_fecha_hora'] >= ultimo_salida_fecha_hora]  # no se como podría no haber errores con el criterio
+df_distribucion_nuevos = df_distribucion_nuevos[df_distribucion_nuevos['salida_fecha_hora'] >= ultimo_salida_fecha_hora]
 
 # generación de merges de nuevos datos con los maestros
 df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_personal[['id_personal', 'nombre']], how='left', left_on='conductor', right_on='nombre')
@@ -125,15 +126,8 @@ df_distribucion_nuevos = pd.DataFrame(d_distribucion_nuevos)
 df_distribucion_fecha_igual = df_distribucion[(df_distribucion['salida_fecha_hora'] == ultimo_salida_fecha_hora)]
 df_distribucion_fecha_igual = df_distribucion_fecha_igual.drop("id_distribucion", axis=1)
 
-# Bucle para comparar se la alguna de las filas de fechas igual son identicas a las filas
-for index1, row1 in df_distribucion_nuevos.iterrows():
-    if df_distribucion_nuevos.loc[index1, "salida_fecha_hora"] == ultimo_salida_fecha_hora:
-        # print(df_distribucion_nuevos.loc[index1, 'no_serie'])
-        for index2, row2 in df_distribucion_fecha_igual.iterrows():
-            if row1.equals(row2):
-                df_distribucion_nuevos = df_distribucion_nuevos.drop(index1, axis=0)
-            # else:
-            # print('La fila ', index1, 'no es igual')
+# Se comprubea si alguna de las filas del dataframe de nuevos datos esta dentro del ya existente y se descartan las que ya estaán incluidas
+df_distribucion_nuevos = df_distribucion_nuevos[df_distribucion_nuevos.isin(df_distribucion_fecha_igual) == False].dropna(how='all')
 
 # ===== modificar los indices =====
 
