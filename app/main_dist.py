@@ -72,7 +72,7 @@ df_distribucion_nuevos = pd.read_excel(
     names=['no_serie', 'conductor', 'nombre_attsf', 'fecha_salida', 'hora_salida', 
            'fecha_llegada', 'hora_llegada', 'km_salida', 'km_llegada', 'km_totales',
            'tm', 'tipo_producto', 'wilaya', 'incidencias', 'observaciones'],
-    header=3)
+    header=2)
 df_distribucion_nuevos = df_distribucion_nuevos.dropna(how='all')
 
 # union de fechas y horas
@@ -130,7 +130,10 @@ df_distribucion_fecha_igual = df_distribucion[(df_distribucion['salida_fecha_hor
 df_distribucion_fecha_igual = df_distribucion_fecha_igual.drop("id_distribucion", axis=1)
 
 # Se comprubea si alguna de las filas del dataframe de nuevos datos esta dentro del ya existente y se descartan las que ya estaán incluidas
-df_distribucion_nuevos = df_distribucion_nuevos[df_distribucion_nuevos.isin(df_distribucion_fecha_igual) == False].dropna(how='all')
+df_distribucion_nuevos = df_distribucion_nuevos.drop(
+    df_distribucion_nuevos[(df_distribucion_nuevos['salida_fecha_hora'] == ultimo_salida_fecha_hora) & (df_distribucion_nuevos['no_serie'].isin(df_distribucion_fecha_igual['no_serie']))].index,
+    axis=0)
+df_distribucion_nuevos
 
 # ===== modificar los indices =====
 
