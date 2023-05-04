@@ -33,8 +33,6 @@ logger = logger()
 
 logger.info('Inicio ETL Ot')
 
-# etl_ot()
-
 # Crear una instancia de la sesión ORM
 session = Session(engine)
 
@@ -48,11 +46,12 @@ df_repuesto = pd.read_sql(session.query(Repuesto).statement, conn)
 df_personal = pd.read_sql(session.query(Personal).statement, conn)
 df_camion = pd.read_sql(session.query(Camion).statement, conn)
 df_wilaya = pd.read_sql(session.query(Wilaya).statement, conn)
+
 # Obtener la ultima fecha, el ultimo id_ot y los ots que tienen la ultima fecha
 ultima_fecha = session.query(Ot.fecha_inicio).filter(Ot.fecha_inicio != None).order_by(Ot.fecha_inicio.desc()).first()[0]
 ultima_id_ot = session.query(Ot.id_ot).order_by(Ot.id_ot.desc()).first()[0]
+
 # Se toman las ots que tienen la ultima fecha
-# ot_ultima_fecha = session.query(Ot.ot).filter(Ot.fecha_inicio == ultima_fecha).all()
 ot_ultima_fecha = [ot[0] for ot in session.query(Ot.ot).filter(Ot.fecha_inicio == ultima_fecha).all()]
 
 session.close()
@@ -62,7 +61,7 @@ session.close()
 name_prev = 'OTP'
 file_prev = find_file(path_input, name_prev)
 
-hoja_prev = 'OTP20'
+hoja_prev = 'OTP2'
 sheet_prev = busqueda_hoja(file_prev, hoja_prev)
 
 # Se extrae la información del excel de ot preventivo
@@ -78,8 +77,6 @@ df_prev = pd.read_excel(
             'agua destilada', 'ruedas', 'lamparas', 'd/tacgfo', 's. lava',
             'j. carroceria', 'calcho', 'grasa', 'descripcion_trabajo_solicitado',
             'observacion'])
-
-print(df_prev)
 
 # Convertir la fecha a tipo datetime64[ns]
 ultima_fecha = np.datetime64(ultima_fecha)
@@ -142,10 +139,9 @@ df_ot_prev['mecanico'].replace({'bol-la sidi azman': 'Bolla Sidi Azman',
                                 'mohamed salem mohamed': 'Mohamed Salem Mohamed Alamin',
                                 'mohamidy emhamed brahim': 'Mohamidi Emhamed Brahim',
                                 'salek mohamed salem': 'Salec Mohamed Salem'}, inplace=True)
-# 'hamdi moh lamin': None,
-# 'jefe taller': None,
-# 'mrabihrabu hamudi': None,
-# 'omar ahmed mohamed': None,
+# mecanicos que no se saben:                                
+# 'hamdi moh lamin': None, 'jefe taller': None,
+# 'mrabihrabu hamudi': None, 'omar ahmed mohamed': None,
 
 # Se resetea el index
 df_ot_prev.reset_index(inplace=True, drop=True)
@@ -254,19 +250,11 @@ df_ot_corr['mecanico'].replace({'abba hamdi': 'abba hamdi mohamed salem',
                                 'mohamed salem mohamed': 'mohamed salem mohamed alamin',
                                 'mohamidy emhamed brahim': 'mohamidi emhamed brahim',
                                 'salek mohamed salem': 'salec mohamed salem'}, inplace=True)
-
-# 'amar ahmed mohamed': None,
-# 'hamdi + bel-la': None,
-# 'hamdi mohamed lamin': None,
-# 'j. taller': None,
-# 'jefe taller': None,
-# 'log,direccion': None,
-# 'logista': None,
-# 'mohamed lamin': None,
-# 'mrabihrabu hamudi': None,
-# 'omar ahmed mohamed': None,
-# 'sidati mahfud': None,
-# 'todos': None
+# Mecanicos que no se saben:
+# 'amar ahmed mohamed': None, 'hamdi + bel-la': None, 'hamdi mohamed lamin': None,
+# 'j. taller': None, 'jefe taller': None, 'log,direccion': None,
+# 'logista': None, 'mohamed lamin': None, 'mrabihrabu hamudi': None,
+# 'omar ahmed mohamed': None, 'sidati mahfud': None, 'todos': None
 
 
 # Se resetea el index por los valores eliminados
@@ -344,8 +332,7 @@ df_ot = pd.merge(df_ot, df_wilaya.loc[:, ['id_wilaya', 'wilaya']], how='left', o
 # Eliminar columna id_wilaya
 df_ot = df_ot.drop('id_wilaya', axis=1)
 
-# Se crea una columna taller
-# df_ot['taller'] = ''
+# Se aplica la funcion para asociar un taller
 df_ot['taller'] = df_ot.apply(asociar_wilaya_taller, axis=1)
 
 # Eliminar columna wilaya, id_tipo_vehiculo
@@ -395,21 +382,15 @@ df_ot = df_ot[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
 # ######################################### PREVENTIVO #########################################
 
 name_agua = 'UNHCR'
-file = find_file(path_input, name_agua)
+file_agua = find_file(path_input, name_agua)
 
-hoja_agua_prev = '-------------.xlsx'
-sheet_agua_prev = busqueda_hoja(file_name=hoja_agua_prev)
-
-name_agua = 'UNHCR'
-file_agua = find_file(path_input, name_corr)
-
-hoja_agua = 'Correctiva'
-sheet_agua = busqueda_hoja(file_corr, hoja_corr)
+hoja_agua_prev = 'Base de datos Preventiva'
+sheet_agua_prev = busqueda_hoja(file_agua, hoja_agua_prev)
 
 # Se extrae la información del excel de ot preventivo
 df_prev_agua = pd.read_excel(
-    path_input / 'BASE DE DATOS 2023 UNHCR.xlsx',
-    sheet_name='Base de datos Preventiva',
+    file_agua,
+    sheet_name=hoja_agua_prev,
     usecols='A, B, G, H, I:J, L:Z, AA',
     skiprows=1,
     parse_dates=['fecha_inicio', 'fecha_fin'],
@@ -518,15 +499,14 @@ df_ot_agua_prev = df_ot_agua_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'tal
 
 
 # ######################################### CORRECTIVO #########################################
-# PROBLEMA CON LOS MECANICOS, VA A VER SOLO ESAS AVERIAS?
 
-hoja_agua_corr = '-------------.xlsx'
-sheet_agua_corr = busqueda_hoja(file_name=hoja_agua_corr)
+hoja_agua_corr = 'Base de datos Correctiva'
+sheet_agua_corr = busqueda_hoja(file_agua, hoja_agua_corr)
 
 # Se extrae la información del excel de ot correctivo
 df_corr_agua = pd.read_excel(
-    path_input / 'BASE DE DATOS 2023 UNHCR.xlsx',
-    sheet_name='Base de datos Correctiva',
+    file_agua,
+    sheet_name=hoja_agua_corr,
     usecols='A, B, C, E, I:J, L:P, Q, R, S',
     skiprows=10,
     parse_dates=['fecha_inicio', 'fecha_fin'],
@@ -597,12 +577,9 @@ df_ot_agua_corr = df_ot_agua_corr.replace({'mecanico': {'Saleh': 'Saleh Mohamed 
                                                         'Jatri mohamed': 'Jatri  Mohamed',
                                                         'Moh lamin': 'Mohamed Lamin Mustafa',
                                                         'Ali salem': 'Alisalem Mohamed-Salem'}})
-
-# 'Todos': None,
-# 'Mec transporte ': None,
-# 'Conductor': None,
-# 'Lamni': None,
-# 'Mohamed': None,
+# Mecanicos que no se saben:
+# 'Todos': None, 'Mec transporte ': None, 'Conductor': None,
+# 'Lamni': None, 'Mohamed': None,
 # ---------------------------------------------
 
 # Se resetea el index por los valores eliminados
@@ -836,8 +813,6 @@ df_ot_agua_averia = df_ot_agua_averia.drop('averia', axis=1)
 # ######################################### OT REPUESTO ALIMENTO #########################################
 
 # Se crea la lista de repuestos
-# df_tipo_repuesto = df_repuesto.drop('id_repuesto', axis=1)
-
 df_tipo_repuesto = pd.DataFrame({'repuesto': ['aceite motor', 'anticongelante', 'liquido de embrague', 'liquido direccion',
                                               'liquido de freno', 'agua destilada', 'aceite caja cambios', 'acido baterias',
                                               'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
@@ -935,17 +910,6 @@ df_ot_averia_union = pd.concat([df_ot_averia, df_ot_agua_averia], axis=0)
 
 df_ot_repuesto_union.reset_index(inplace=True, drop=True)
 df_ot_averia_union.reset_index(inplace=True, drop=True)
-
-duplicados_averias = df_ot_averia_union[df_ot_averia_union.duplicated()]  # 0
-duplicados_repuestos = df_ot_repuesto_union[df_ot_repuesto_union.duplicated()]  # 0
-
-# print(duplicados_averias)
-# print(duplicados_repuestos)
-
-
-df_ot_union.to_csv(path_output / 'BORRAROT.csv', index=False, encoding='utf-8')
-df_ot_averia_union.to_csv(path_output / 'BORRARAVERIA.csv', index=False, encoding='utf-8')
-df_ot_agua_repuesto.to_csv(path_output / 'BORRARREPUESTO.csv', index=False, encoding='utf-8')
 
 # ######################################### DBEAVER #########################################
 

@@ -97,30 +97,6 @@ def busqueda_hoja(file_pathname, sheet_name):
     return None
 
 
-# # Funcion que busca hoja de excel
-# def busqueda_hoja_concreta(file_name):
-#     """
-#     Funcion que busca el nombre de una hoja de excel de acuerdo a un patron dado.
-
-#     Devuelve la cadena encontrada.
-#     """
-#     # Crear path de origen de nuevos datos
-#     path_input_nuevos = dp.rootFolder / 'data' / 'nuevos_datos'
-
-#     # Carga el archivo de Excel
-#     excel_file = pd.ExcelFile(path_input_nuevos / file_name)
-
-#     # Definimos el patrón a buscar en el nombre de la hoja
-#     patron = re.compile(r"base\s+datos\s+\d{4}")
-
-#     # Iteramos sobre las hojas y buscamos aquellas cuyo nombre coincida con el patrón
-#     for hoja in excel_file.sheet_names:
-#         if patron.search(hoja):
-#             hoja_1 = hoja
-
-#     return (hoja_1)
-
-
 def elements_not_in_list(list1, list2):
     """
     Comprueba que los elementos de la lista 2 están en la lista 1. Si hay alguno
