@@ -19,7 +19,7 @@ from models.model import Wilaya
 from models.model import Tipo_vehiculo
 
 
-path_input = dp.rootFolder / 'data' / 'maestros'
+path_input = dp.rootFolder / 'data'
 
 dp.logger.info('Inicio ETL Maestros')
 # ==============================================================================

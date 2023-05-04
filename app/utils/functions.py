@@ -172,3 +172,30 @@ def capitalize_df(df):
     - DataFrame capitalizado.
     """
     return df.applymap(lambda x: x.capitalize() if isinstance(x, str) else x)
+
+
+def find_file(path, name):
+    """
+    Busca un archivo que contenga el nombre proporcionado en el directorio indicado.
+
+    Args:
+        path: Objeto Path que representa el directorio donde se buscará el archivo.
+        name: Cadena que debe aparecer en el nombre del archivo.
+
+    Returns:
+        El nombre completo del archivo que contiene el nombre proporcionado, o None si no se encuentra.
+    """
+    # Crear un patrón de búsqueda que contenga la cadena proporcionada en el nombre del archivo
+    pattern = f'*{name}*'
+
+    # Utilizar el método glob() para buscar archivos que coincidan con el patrón en el directorio proporcionado
+    files = path.glob(pattern)
+
+    # Iterar sobre los archivos encontrados y devolver el nombre del primer archivo
+    # que contenga la cadena proporcionada
+    for file in files:
+        if name in file.name:
+            return str(file)
+
+    # Si no se encuentra ningún archivo, devolver None
+    return None
