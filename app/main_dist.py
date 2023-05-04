@@ -60,14 +60,14 @@ path_input_nuevos = dp.rootFolder / 'data' / 'nuevos_datos'
 
 # ===== Hacer merge de los nuevos datos con los maestros =====
 
-# Leer datos nuevos TENIENDO EN CUENTA QUE ESTE SEA EL FORMATO
+# Leer datos nuevos 
 
 file_name = 'bbdd_distribucion.xlsx'
 sheet_name = busqueda_hoja(file_pathname=path_input_nuevos / file_name, sheet_name='base  datos')
 
 df_distribucion_nuevos = pd.read_excel(
     path_input_nuevos / file_name,
-    sheet_name=sheet_name,  # optimizar búsqueda de hoja
+    sheet_name=sheet_name,  
     usecols='A, B, C, D, E, F, G, I, J, K, L, M, N, AC, AD',
     names=['no_serie', 'conductor', 'nombre_attsf', 'fecha_salida', 'hora_salida', 
            'fecha_llegada', 'hora_llegada', 'km_salida', 'km_llegada', 'km_totales',
@@ -145,6 +145,5 @@ df_distribucion_nuevos
 # ===== volcar nuevos datos en el servidor SQL =====
 
 df_distribucion_nuevos.to_sql('tbl_distribucion', con=engine, if_exists='append', index=False)
-# df_distribucion_nuevos.to_sql(name='tbl_distribucion', con=engine, schema='attsf', if_exists='append', index=False)  # servidor postgres 
 
 logger.info('Fin ETL Distribucion')
