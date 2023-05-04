@@ -23,6 +23,8 @@ from utils.functions import columnas_texto
 from utils.functions import asociar_wilaya_taller
 from utils.functions import pasar_a_int
 from utils.functions import replace_camion
+from utils.functions import busqueda_hoja
+from utils.functions import find_file
 
 
 path_input = dp.rootFolder / 'data' / '2023'
@@ -58,12 +60,16 @@ session.close()
 
 # ------------------------------------------------------------ ALIMENTOS ------------------------------------------------------------
 # ######################################### PREVENTIVO #########################################
-# MECANICOS?????????? OJO CON LAS FECHAS!
+name_prev = 'OTP'
+file_prev = find_file(path_input, name_prev)
+
+hoja_prev = 'OTP'
+sheet_prev = busqueda_hoja(file_name=hoja_prev)
 
 # Se extrae la información del excel de ot preventivo
 df_prev = pd.read_excel(
-    path_input / 'OTP DE 2023 NUEVA.xlsx',
-    sheet_name='OTP2022',
+    file_prev,
+    sheet_name=sheet_prev,
     usecols='A, C, D, E, I, K, P:AD, AE, AH',
     skiprows=6,
     parse_dates=['fecha_inicio', 'fecha_fin'],
@@ -172,7 +178,12 @@ df_ot_prev = df_ot_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
 
 
 # ######################################### CORRECTIVO #########################################
-# PROBLEMA CON LOS MECANICOS
+
+name_corr = 'correctivas'
+file_corr = find_file(path_input, name_corr)
+
+hoja_corr = '-------------.xlsx'
+sheet_corr = busqueda_hoja(file_name=hoja_corr)
 
 # Se extrae la información del excel de ot correctivo
 df_corr = pd.read_excel(
@@ -382,8 +393,13 @@ df_ot = df_ot[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
 # ------------------------------------------------------------ AGUA ------------------------------------------------------------
 
 # ######################################### PREVENTIVO #########################################
-# NO HAY COLUMNA DE MECANICOS
 # SE PONE EL COSTE? OJO CON LAS FECHAS!
+
+name_agua = 'UNHCR'
+file = find_file(path_input, name_agua)
+
+hoja_agua_prev = '-------------.xlsx'
+sheet_agua_prev = busqueda_hoja(file_name=hoja_agua_prev)
 
 # Se extrae la información del excel de ot preventivo
 df_prev_agua = pd.read_excel(
@@ -498,6 +514,9 @@ df_ot_agua_prev = df_ot_agua_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'tal
 
 # ######################################### CORRECTIVO #########################################
 # PROBLEMA CON LOS MECANICOS, VA A VER SOLO ESAS AVERIAS?
+
+hoja_agua_corr = '-------------.xlsx'
+sheet_agua_corr = busqueda_hoja(file_name=hoja_agua_corr)
 
 # Se extrae la información del excel de ot correctivo
 df_corr_agua = pd.read_excel(
