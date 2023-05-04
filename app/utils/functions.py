@@ -16,9 +16,9 @@ def columnas_texto(columna, formato):
     """
     if formato == "capitalize":
         columna = columna.str.capitalize()
-    if formato == "upper":
+    elif formato == "upper":
         columna = columna.str.upper()
-    if formato == "lower":
+    elif formato == "lower":
         columna = columna.str.lower()
     else:
         columna = columna.str.title()
@@ -72,27 +72,53 @@ def replace_camion(match):
 
 
 # Funcion que busca hoja de excel
-def busqueda_hoja(file_name):
+def busqueda_hoja(file_pathname, sheet_name):
     """
     Funcion que busca el nombre de una hoja de excel de acuerdo a un patron dado.
 
-    Devuelve la cadena encontrada.
+    Args:
+    - fila_pathname: nombre que devuelve la funcion find_file.
+    - sheet_name: el patron usado para la hoja.
+
+    Returns:
+    - El nombre de la hoja si se encuentra o None en caso contrario.
     """
-    # Crear path de origen de nuevos datos
-    path_input_nuevos = dp.rootFolder / 'data' / 'nuevos_datos'
 
     # Carga el archivo de Excel
-    excel_file = pd.ExcelFile(path_input_nuevos / file_name)
+    excel_file = pd.ExcelFile(file_pathname)
 
     # Definimos el patrón a buscar en el nombre de la hoja
-    patron = re.compile(r"base\s+datos\s+\d{4}")
+    patron = re.compile(sheet_name)
 
     # Iteramos sobre las hojas y buscamos aquellas cuyo nombre coincida con el patrón
     for hoja in excel_file.sheet_names:
         if patron.search(hoja):
-            hoja_1 = hoja
+            return (hoja)
+    return None
 
-    return (hoja_1)
+
+# # Funcion que busca hoja de excel
+# def busqueda_hoja_concreta(file_name):
+#     """
+#     Funcion que busca el nombre de una hoja de excel de acuerdo a un patron dado.
+
+#     Devuelve la cadena encontrada.
+#     """
+#     # Crear path de origen de nuevos datos
+#     path_input_nuevos = dp.rootFolder / 'data' / 'nuevos_datos'
+
+#     # Carga el archivo de Excel
+#     excel_file = pd.ExcelFile(path_input_nuevos / file_name)
+
+#     # Definimos el patrón a buscar en el nombre de la hoja
+#     patron = re.compile(r"base\s+datos\s+\d{4}")
+
+#     # Iteramos sobre las hojas y buscamos aquellas cuyo nombre coincida con el patrón
+#     for hoja in excel_file.sheet_names:
+#         if patron.search(hoja):
+#             hoja_1 = hoja
+
+#     return (hoja_1)
 
 
 def elements_not_in_list(list1, list2):

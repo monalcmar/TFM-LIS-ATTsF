@@ -23,10 +23,11 @@ from utils.functions import columnas_texto
 from utils.functions import asociar_wilaya_taller
 from utils.functions import pasar_a_int
 from utils.functions import replace_camion
+from utils.functions import busqueda_hoja
+from utils.functions import find_file
 
 
-path_input = dp.rootFolder / 'data' / '2023'
-path_output = dp.rootFolder / 'data' / 'processed'
+path_input = dp.rootFolder / 'data'
 
 logger = logger()
 
@@ -58,12 +59,16 @@ session.close()
 
 # ------------------------------------------------------------ ALIMENTOS ------------------------------------------------------------
 # ######################################### PREVENTIVO #########################################
-# MECANICOS?????????? OJO CON LAS FECHAS!
+name_prev = 'OTP'
+file_prev = find_file(path_input, name_prev)
+
+hoja_prev = 'OTP20'
+sheet_prev = busqueda_hoja(file_prev, hoja_prev)
 
 # Se extrae la información del excel de ot preventivo
 df_prev = pd.read_excel(
-    path_input / 'OTP DE 2023 NUEVA.xlsx',
-    sheet_name='OTP2022',
+    file_prev,
+    sheet_name=sheet_prev,
     usecols='A, C, D, E, I, K, P:AD, AE, AH',
     skiprows=6,
     parse_dates=['fecha_inicio', 'fecha_fin'],
@@ -74,6 +79,7 @@ df_prev = pd.read_excel(
             'j. carroceria', 'calcho', 'grasa', 'descripcion_trabajo_solicitado',
             'observacion'])
 
+print(df_prev)
 
 # Convertir la fecha a tipo datetime64[ns]
 ultima_fecha = np.datetime64(ultima_fecha)
@@ -96,13 +102,14 @@ df_ot_prev['frecuencia'] = df_ot_prev['frecuencia'].fillna('No frecuencia')
 # ---------------------------------------------
 # Se limpian los datos
 df_ot_prev['ot'] = df_ot_prev['ot'].astype(str)
-df_ot_prev['ot'] = columnas_texto(df_ot_prev['ot'], "upper")
+df_ot_prev['ot'] = columnas_texto(df_ot_prev['ot'], 'upper')
 
-df_ot_prev['camion'] = columnas_texto(df_ot_prev['camion'], "upper")
+df_ot_prev['camion'] = df_ot_prev['camion'].astype(str)
+df_ot_prev['camion'] = columnas_texto(df_ot_prev['camion'], 'upper')
 
-df_ot_prev['mecanico'] = columnas_texto(df_ot_prev['mecanico'], "lower")
+df_ot_prev['mecanico'] = columnas_texto(df_ot_prev['mecanico'], 'lower')
 
-df_ot_prev['frecuencia'] = columnas_texto(df_ot_prev['frecuencia'], "capitalize")
+df_ot_prev['frecuencia'] = columnas_texto(df_ot_prev['frecuencia'], 'capitalize')
 
 columnas_repuestos = ['aceite motor', 'anticongelante', 'liquido de embrague',
                       'liquido direccion', 'acido baterias', 'liquido de freno',
@@ -171,12 +178,17 @@ df_ot_prev = df_ot_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
 
 
 # ######################################### CORRECTIVO #########################################
-# PROBLEMA CON LOS MECANICOS
+
+name_corr = 'correctivas'
+file_corr = find_file(path_input, name_corr)
+
+hoja_corr = 'Correctiva'
+sheet_corr = busqueda_hoja(file_corr, hoja_corr)
 
 # Se extrae la información del excel de ot correctivo
 df_corr = pd.read_excel(
-    path_input / 'Base de Trabajo correctivas  de 2023.xlsx',
-    sheet_name='BaseDatosCorrectiva 2023',
+    file_corr,
+    sheet_name=sheet_corr,
     usecols='A, C, E, I, K, R:AD, AE, AF, AG',
     skiprows=5,
     parse_dates=['fecha_inicio', 'fecha_fin'],
@@ -201,19 +213,19 @@ df_ot_corr.dropna(subset=['fecha_inicio'], inplace=True)
 # ---------------------------------------------
 # Se limpian los datos
 df_ot_corr['ot'] = df_ot_corr['ot'].astype(str)
-df_ot_corr['ot'] = columnas_texto(df_ot_corr['ot'], "upper")
+df_ot_corr['ot'] = columnas_texto(df_ot_corr['ot'], 'upper')
 
-df_ot_corr['camion'] = columnas_texto(df_ot_corr['camion'], "upper")
+df_ot_corr['camion'] = columnas_texto(df_ot_corr['camion'], 'upper')
 
-df_ot_corr['mecanico'] = columnas_texto(df_ot_corr['mecanico'], "capitalize")
+df_ot_corr['mecanico'] = columnas_texto(df_ot_corr['mecanico'], 'capitalize')
 
 df_ot_corr['taller'] = ''
 
-df_ot_corr['descripcion_trabajo_solicitado'] = columnas_texto(df_ot_corr['descripcion_trabajo_solicitado'], "capitalize")
+df_ot_corr['descripcion_trabajo_solicitado'] = columnas_texto(df_ot_corr['descripcion_trabajo_solicitado'], 'capitalize')
 
-df_ot_corr['descripcion_trabajo_realizado'] = columnas_texto(df_ot_corr['descripcion_trabajo_realizado'], "capitalize")
+df_ot_corr['descripcion_trabajo_realizado'] = columnas_texto(df_ot_corr['descripcion_trabajo_realizado'], 'capitalize')
 
-df_ot_corr['observacion'] = columnas_texto(df_ot_corr['observacion'], "capitalize")
+df_ot_corr['observacion'] = columnas_texto(df_ot_corr['observacion'], 'capitalize')
 
 columnas_averias = ['chasis', 'carroceria', 'ruedas', 'elec, vehiculos', 'obra civil',
                     'agua y combustible', 'herramientas', 'informatica', 'exteriores',
@@ -324,7 +336,7 @@ df_ot = pd.merge(df_ot, df_camion.loc[:, ['id_camion', 'nombre_attsf', 'id_wilay
 # Eliminar columna camion
 df_ot = df_ot.drop(['camion', 'nombre_attsf'], axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot['id_camion'] = df_ot['id_camion'].replace({np.NaN: None}).astype("Int64")
+df_ot['id_camion'] = df_ot['id_camion'].replace({np.NaN: None}).astype('Int64')
 
 # ---------------TALLER VACIO ---------------
 # Para tomar los talleres se extrae la informacion de las wilayas
@@ -333,33 +345,33 @@ df_ot = pd.merge(df_ot, df_wilaya.loc[:, ['id_wilaya', 'wilaya']], how='left', o
 df_ot = df_ot.drop('id_wilaya', axis=1)
 
 # Se crea una columna taller
-df_ot['taller'] = ''
+# df_ot['taller'] = ''
 df_ot['taller'] = df_ot.apply(asociar_wilaya_taller, axis=1)
 
 # Eliminar columna wilaya, id_tipo_vehiculo
 df_ot = df_ot.drop(['wilaya', 'id_tipo_vehiculo'], axis=1)
 # ---------------------------------------------
 
-# Merge de ot e id_taller
-df_ot = pd.merge(df_ot, df_taller.loc[:, ['id_taller', 'taller']], how='left', on='taller')
+# Merge de ot e id_taller 
+df_ot = pd.merge(df_ot, df_taller.loc[:, ['id_taller', 'taller']], how='left', on='taller') 
 # Eliminar columna taller
 df_ot = df_ot.drop('taller', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot['id_taller'] = df_ot['id_taller'].replace({np.NaN: None}).astype("Int64")
+df_ot['id_taller'] = df_ot['id_taller'].replace({np.NaN: None}).astype('Int64')
 
 # Merge de ot e id_tipo_ot
 df_ot = pd.merge(df_ot, df_tipo_ot, how='left', on='tipo_ot')
 # Eliminar columna tipo_ot
 df_ot = df_ot.drop('tipo_ot', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot['id_tipo_ot'] = df_ot['id_tipo_ot'].replace({np.NaN: None}).astype("Int64")
+df_ot['id_tipo_ot'] = df_ot['id_tipo_ot'].replace({np.NaN: None}).astype('Int64')
 
 # Merge de ot e id_frecuencia
 df_ot = pd.merge(df_ot, df_frecuencia, how='left', on='frecuencia')
 # Eliminar columna frecuencia
 df_ot = df_ot.drop('frecuencia', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot['id_frecuencia'] = df_ot['id_frecuencia'].replace({np.NaN: None}).astype("Int64")
+df_ot['id_frecuencia'] = df_ot['id_frecuencia'].replace({np.NaN: None}).astype('Int64')
 
 # Merge de ot e id_mecanico
 df_ot = pd.merge(df_ot, df_personal.loc[:, ['id_personal', 'nombre']], how='left', left_on='mecanico', right_on='nombre')
@@ -368,7 +380,7 @@ df_ot = df_ot.rename(columns={'id_personal': 'id_mecanico'})
 # Eliminar columna mecanico
 df_ot = df_ot.drop('mecanico', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot['id_mecanico'] = df_ot['id_mecanico'].replace({np.NaN: None}).astype("Int64")
+df_ot['id_mecanico'] = df_ot['id_mecanico'].replace({np.NaN: None}).astype('Int64')
 
 df_ot.reset_index(inplace=True, drop=True)
 
@@ -381,8 +393,18 @@ df_ot = df_ot[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
 # ------------------------------------------------------------ AGUA ------------------------------------------------------------
 
 # ######################################### PREVENTIVO #########################################
-# NO HAY COLUMNA DE MECANICOS
-# SE PONE EL COSTE? OJO CON LAS FECHAS!
+
+name_agua = 'UNHCR'
+file = find_file(path_input, name_agua)
+
+hoja_agua_prev = '-------------.xlsx'
+sheet_agua_prev = busqueda_hoja(file_name=hoja_agua_prev)
+
+name_agua = 'UNHCR'
+file_agua = find_file(path_input, name_corr)
+
+hoja_agua = 'Correctiva'
+sheet_agua = busqueda_hoja(file_corr, hoja_corr)
 
 # Se extrae la información del excel de ot preventivo
 df_prev_agua = pd.read_excel(
@@ -419,13 +441,13 @@ df_ot_agua_prev['frecuencia'] = df_ot_agua_prev['frecuencia'].fillna('No frecuen
 # ---------------------------------------------
 # Se limpian los datos
 df_ot_agua_prev['ot'] = df_ot_agua_prev['ot'].astype(str)
-df_ot_agua_prev['ot'] = columnas_texto(df_ot_agua_prev['ot'], "upper")
+df_ot_agua_prev['ot'] = columnas_texto(df_ot_agua_prev['ot'], 'upper')
 
-df_ot_agua_prev['camion'] = columnas_texto(df_ot_agua_prev['camion'], "upper")
+df_ot_agua_prev['camion'] = columnas_texto(df_ot_agua_prev['camion'], 'upper')
 
-df_ot_agua_prev['taller'] = columnas_texto(df_ot_agua_prev['taller'], "upper")
+df_ot_agua_prev['taller'] = columnas_texto(df_ot_agua_prev['taller'], 'upper')
 
-df_ot_agua_prev['frecuencia'] = columnas_texto(df_ot_agua_prev['frecuencia'], "capitalize")
+df_ot_agua_prev['frecuencia'] = columnas_texto(df_ot_agua_prev['frecuencia'], 'capitalize')
 
 # df_ot_agua_prev['coste'] = df_ot_agua_prev['coste'].astype(float)
 
@@ -498,6 +520,9 @@ df_ot_agua_prev = df_ot_agua_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'tal
 # ######################################### CORRECTIVO #########################################
 # PROBLEMA CON LOS MECANICOS, VA A VER SOLO ESAS AVERIAS?
 
+hoja_agua_corr = '-------------.xlsx'
+sheet_agua_corr = busqueda_hoja(file_name=hoja_agua_corr)
+
 # Se extrae la información del excel de ot correctivo
 df_corr_agua = pd.read_excel(
     path_input / 'BASE DE DATOS 2023 UNHCR.xlsx',
@@ -525,17 +550,17 @@ df_ot_agua_corr.dropna(subset=['fecha_inicio'], inplace=True)
 # ---------------------------------------------
 # Se limpian los datos
 df_ot_agua_corr['ot'] = df_ot_agua_corr['ot'].astype(str)
-df_ot_agua_corr['ot'] = columnas_texto(df_ot_agua_corr['ot'], "upper")
+df_ot_agua_corr['ot'] = columnas_texto(df_ot_agua_corr['ot'], 'upper')
 
-df_ot_agua_corr['camion'] = columnas_texto(df_ot_agua_corr['camion'], "upper")
+df_ot_agua_corr['camion'] = columnas_texto(df_ot_agua_corr['camion'], 'upper')
 
-df_ot_agua_corr['mecanico'] = columnas_texto(df_ot_agua_corr['mecanico'], "capitalize")
+df_ot_agua_corr['mecanico'] = columnas_texto(df_ot_agua_corr['mecanico'], 'capitalize')
 
-df_ot_agua_corr['descripcion_trabajo_solicitado'] = columnas_texto(df_ot_agua_corr['descripcion_trabajo_solicitado'], "capitalize")
+df_ot_agua_corr['descripcion_trabajo_solicitado'] = columnas_texto(df_ot_agua_corr['descripcion_trabajo_solicitado'], 'capitalize')
 
-df_ot_agua_corr['descripcion_trabajo_realizado'] = columnas_texto(df_ot_agua_corr['descripcion_trabajo_realizado'], "capitalize")
+df_ot_agua_corr['descripcion_trabajo_realizado'] = columnas_texto(df_ot_agua_corr['descripcion_trabajo_realizado'], 'capitalize')
 
-df_ot_agua_corr['observacion'] = columnas_texto(df_ot_agua_corr['observacion'], "capitalize")
+df_ot_agua_corr['observacion'] = columnas_texto(df_ot_agua_corr['observacion'], 'capitalize')
 
 columnas_averias = ['chasis', 'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos']
 df_ot_agua_corr['chasis'] = pasar_a_int(df_ot_agua_corr, 'chasis')
@@ -558,7 +583,7 @@ df_ot_agua_corr['frecuencia'] = 'No frecuencia'
 # Crear una columna de tipo_ot = 'Correctivo'
 df_ot_agua_corr['tipo_ot'] = 'Correctivo'
 
-# REVISAR LOS MECANICOS CAMBIADOS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 # Se reemplazan los nombres de los mecanicos
 df_ot_agua_corr = df_ot_agua_corr.replace({'mecanico': {'Saleh': 'Saleh Mohamed Salma',
                                                         'Mohamed lamin': 'Mohamed Lamin Hussein',
@@ -614,7 +639,7 @@ df_ot_agua = pd.merge(df_ot_agua, df_camion.loc[:, ['id_camion', 'nombre_attsf']
 # Eliminar columna nombre_attsf
 df_ot_agua = df_ot_agua.drop('nombre_attsf', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot['id_camion'] = df_ot['id_camion'].replace({np.NaN: None}).astype("Int64")
+df_ot['id_camion'] = df_ot['id_camion'].replace({np.NaN: None}).astype('Int64')
 
 # ---------------TALLER VACIO ---------------
 # Como hay talleres vacios se extraen del camion y las wilayas
@@ -641,21 +666,21 @@ df_ot_agua = pd.merge(df_ot_agua, df_taller.loc[:, ['id_taller', 'taller']], how
 # Eliminar columna taller
 df_ot_agua = df_ot_agua.drop('taller', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot_agua['id_taller'] = df_ot_agua['id_taller'].replace({np.NaN: None}).astype("Int64")
+df_ot_agua['id_taller'] = df_ot_agua['id_taller'].replace({np.NaN: None}).astype('Int64')
 
 # Merge de ot e id_tipo_ot
 df_ot_agua = pd.merge(df_ot_agua, df_tipo_ot, how='left', on='tipo_ot')
 # Eliminar columna tipo_ot
 df_ot_agua = df_ot_agua.drop('tipo_ot', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot['id_tipo_ot'] = df_ot['id_tipo_ot'].replace({np.NaN: None}).astype("Int64")
+df_ot['id_tipo_ot'] = df_ot['id_tipo_ot'].replace({np.NaN: None}).astype('Int64')
 
 # Merge de ot e id_frecuencia
 df_ot_agua = pd.merge(df_ot_agua, df_frecuencia, how='left', on='frecuencia')
 # Eliminar columna frecuencia
 df_ot_agua = df_ot_agua.drop('frecuencia', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot['id_frecuencia'] = df_ot['id_frecuencia'].replace({np.NaN: None}).astype("Int64")
+df_ot['id_frecuencia'] = df_ot['id_frecuencia'].replace({np.NaN: None}).astype('Int64')
 
 # Merge de ot e id_mecanico
 df_ot_agua = pd.merge(df_ot_agua, df_personal.loc[:, ['id_personal', 'nombre']], how='left', left_on='mecanico', right_on='nombre')
@@ -664,7 +689,7 @@ df_ot_agua = df_ot_agua.rename(columns={'id_personal': 'id_mecanico'})
 # Eliminar columna mecanico
 df_ot_agua = df_ot_agua.drop('mecanico', axis=1)
 # Como salen Nan hay que pasarlo a int
-df_ot_agua['id_mecanico'] = df_ot_agua['id_mecanico'].replace({np.NaN: None}).astype("Int64")
+df_ot_agua['id_mecanico'] = df_ot_agua['id_mecanico'].replace({np.NaN: None}).astype('Int64')
 
 # Se reordenan las columnas
 df_ot_agua = df_ot_agua[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
@@ -750,7 +775,7 @@ df_ot_averia = pd.melt(
 ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'averia'})
 
 # Se limpian los datos
-df_ot_averia['averia'] = columnas_texto(df_ot_averia['averia'], "capitalize")
+df_ot_averia['averia'] = columnas_texto(df_ot_averia['averia'], 'capitalize')
 
 # Merge ot
 df_ot_averia = pd.merge(df_ot_averia, df_ot_alimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
@@ -794,7 +819,7 @@ df_ot_agua_averia = pd.melt(
 ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'averia'})
 
 # Se limpian los datos
-df_ot_agua_averia['averia'] = columnas_texto(df_ot_agua_averia['averia'], "capitalize")
+df_ot_agua_averia['averia'] = columnas_texto(df_ot_agua_averia['averia'], 'capitalize')
 
 # Merge ot
 df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_ot_noalimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
@@ -843,7 +868,7 @@ df_ot_repuesto = pd.melt(
 ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'repuesto'})
 
 # Se limpian los datos
-df_ot_repuesto['repuesto'] = columnas_texto(df_ot_repuesto['repuesto'], "capitalize")
+df_ot_repuesto['repuesto'] = columnas_texto(df_ot_repuesto['repuesto'], 'capitalize')
 
 # Merge ot
 df_ot_repuesto = pd.merge(df_ot_repuesto, df_ot_alimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
@@ -856,7 +881,7 @@ df_ot_repuesto = pd.merge(df_ot_repuesto, df_repuesto.loc[:, ['id_repuesto', 're
 df_ot_repuesto = df_ot_repuesto.drop('repuesto', axis=1)
 # Como todos los id_ot nan estan en df_nocamiones esas ots no pertenecen a los camiones
 # hay averias que no tienen ot porque se han quitado las instalaciones en la columna 'camion'
-df_ot_repuesto.dropna(subset=['id_ot'], inplace=True)
+df_ot_repuesto.dropna(subset=['id_ot'], inplace=True) 
 df_ot_repuesto['id_ot'] = df_ot_repuesto['id_ot'].astype(int)
 
 # ######################################### OT REPUESTO AGUA #########################################
@@ -890,7 +915,7 @@ df_ot_agua_repuesto = pd.melt(
 ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'repuesto'})
 
 # Se limpian los datos
-df_ot_agua_repuesto['repuesto'] = columnas_texto(df_ot_agua_repuesto['repuesto'], "capitalize")
+df_ot_agua_repuesto['repuesto'] = columnas_texto(df_ot_agua_repuesto['repuesto'], 'capitalize')
 
 # Merge ot
 df_ot_agua_repuesto = pd.merge(df_ot_agua_repuesto, df_ot_noalimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
@@ -918,9 +943,9 @@ duplicados_repuestos = df_ot_repuesto_union[df_ot_repuesto_union.duplicated()]  
 # print(duplicados_repuestos)
 
 
-df_ot_union.to_csv(path_output / "BORRAROT.csv", index=False, encoding='utf-8')
-df_ot_averia_union.to_csv(path_output / "BORRARAVERIA.csv", index=False, encoding='utf-8')
-df_ot_agua_repuesto.to_csv(path_output / "BORRARREPUESTO.csv", index=False, encoding='utf-8')
+df_ot_union.to_csv(path_output / 'BORRAROT.csv', index=False, encoding='utf-8')
+df_ot_averia_union.to_csv(path_output / 'BORRARAVERIA.csv', index=False, encoding='utf-8')
+df_ot_agua_repuesto.to_csv(path_output / 'BORRARREPUESTO.csv', index=False, encoding='utf-8')
 
 # ######################################### DBEAVER #########################################
 
