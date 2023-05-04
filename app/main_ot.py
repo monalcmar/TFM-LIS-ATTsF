@@ -63,8 +63,8 @@ session.close()
 name_prev = 'OTP'
 file_prev = find_file(path_input, name_prev)
 
-hoja_prev = 'OTP'
-sheet_prev = busqueda_hoja(file_name=hoja_prev)
+hoja_prev = 'OTP20'
+sheet_prev = busqueda_hoja(file_prev, hoja_prev)
 
 # Se extrae la información del excel de ot preventivo
 df_prev = pd.read_excel(
@@ -80,6 +80,7 @@ df_prev = pd.read_excel(
             'j. carroceria', 'calcho', 'grasa', 'descripcion_trabajo_solicitado',
             'observacion'])
 
+print(df_prev)
 
 # Convertir la fecha a tipo datetime64[ns]
 ultima_fecha = np.datetime64(ultima_fecha)
