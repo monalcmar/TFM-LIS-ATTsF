@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 import datetime
 import re
+import numpy as np
 # =========== Modulos propios ===========
 from logger.logger import logger
 from src.distribucion.etl import etl_distribucion
@@ -62,10 +63,11 @@ path_input_nuevos = dp.rootFolder / 'data' / 'nuevos_datos'
 # Leer datos nuevos TENIENDO EN CUENTA QUE ESTE SEA EL FORMATO
 
 file_name = 'bbdd_distribucion.xlsx'
+sheet_name = busqueda_hoja(file_name=file_name)
 
 df_distribucion_nuevos = pd.read_excel(
     path_input_nuevos / file_name,
-    sheet_name='base  datos 2024',  # optimizar búsqueda de hoja
+    sheet_name=sheet_name,  # optimizar búsqueda de hoja
     usecols='A, B, C, D, E, F, G, I, J, K, L, M, N, AC, AD',
     names=['no_serie', 'conductor', 'nombre_attsf', 'fecha_salida', 'hora_salida', 
            'fecha_llegada', 'hora_llegada', 'km_salida', 'km_llegada', 'km_totales',
@@ -101,8 +103,14 @@ df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_tipo_pro
 df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_wilaya[['id_wilaya', 'wilaya']], 
                                   how='left', on='wilaya')
 
+# Convertir si hubiera nan en foreig keys
+df_distribucion_nuevos['id_personal'] = df_distribucion_nuevos['id_personal'].replace({np.NaN: None}).astype("Int64")
+df_distribucion_nuevos['id_tipo_producto'] = df_distribucion_nuevos['id_tipo_producto'].replace({np.NaN: None}).astype("Int64")
+df_distribucion_nuevos['id_camion'] = df_distribucion_nuevos['id_camion'].replace({np.NaN: None}).astype("Int64")
+df_distribucion_nuevos['id_wilaya'] = df_distribucion_nuevos['id_wilaya'].replace({np.NaN: None}).astype("Int64")
+
 # reconstrucción de dataframe de nuevos datos
-d_distribucion_nuevos = {'id_conductor': df_distribucion_nuevos['id_conductor'],
+d_distribucion_nuevos = {'id_conductor': df_distribucion_nuevos['id_personal'],
                          'id_tipo_producto': df_distribucion_nuevos['id_tipo_producto'],
                          'id_camion': df_distribucion_nuevos['id_camion'],
                          'id_wilaya': df_distribucion_nuevos['id_wilaya'],
@@ -130,8 +138,10 @@ df_distribucion_nuevos.index += (ultimo_id_distribucion + 1)
 df_distribucion_nuevos = df_distribucion_nuevos.reset_index(names='id_distribucion')
 df_distribucion_nuevos
 
+
 # ===== volcar nuevos datos en el servidor SQL =====
 
-df_distribucion_nuevos.to_sql(name='tbl_distribucion', con=engine, schema='attsf', if_exists='append', index=False)
+df_distribucion_nuevos.to_sql('tbl_distribucion', con=engine, if_exists='append', index=False)
+# df_distribucion_nuevos.to_sql(name='tbl_distribucion', con=engine, schema='attsf', if_exists='append', index=False)  # servidor postgres 
 
 logger.info('Fin ETL Distribucion')
