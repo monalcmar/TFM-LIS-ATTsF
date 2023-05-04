@@ -27,8 +27,7 @@ from utils.functions import busqueda_hoja
 from utils.functions import find_file
 
 
-path_input = dp.rootFolder / 'data' / '2023'
-path_output = dp.rootFolder / 'data' / 'processed'
+path_input = dp.rootFolder / 'data'
 
 logger = logger()
 
@@ -183,13 +182,13 @@ df_ot_prev = df_ot_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
 name_corr = 'correctivas'
 file_corr = find_file(path_input, name_corr)
 
-hoja_corr = '-------------.xlsx'
-sheet_corr = busqueda_hoja(file_name=hoja_corr)
+hoja_corr = 'Correctiva'
+sheet_corr = busqueda_hoja(file_corr, hoja_corr)
 
 # Se extrae la información del excel de ot correctivo
 df_corr = pd.read_excel(
-    path_input / 'Base de Trabajo correctivas  de 2023.xlsx',
-    sheet_name='BaseDatosCorrectiva 2023',
+    file_corr,
+    sheet_name=sheet_corr,
     usecols='A, C, E, I, K, R:AD, AE, AF, AG',
     skiprows=5,
     parse_dates=['fecha_inicio', 'fecha_fin'],
@@ -394,13 +393,18 @@ df_ot = df_ot[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
 # ------------------------------------------------------------ AGUA ------------------------------------------------------------
 
 # ######################################### PREVENTIVO #########################################
-# SE PONE EL COSTE? OJO CON LAS FECHAS!
 
 name_agua = 'UNHCR'
 file = find_file(path_input, name_agua)
 
 hoja_agua_prev = '-------------.xlsx'
 sheet_agua_prev = busqueda_hoja(file_name=hoja_agua_prev)
+
+name_agua = 'UNHCR'
+file_agua = find_file(path_input, name_corr)
+
+hoja_agua = 'Correctiva'
+sheet_agua = busqueda_hoja(file_corr, hoja_corr)
 
 # Se extrae la información del excel de ot preventivo
 df_prev_agua = pd.read_excel(
