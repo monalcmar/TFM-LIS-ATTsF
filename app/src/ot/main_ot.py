@@ -27,12 +27,10 @@ from utils.functions import busqueda_hoja
 from utils.functions import find_file
 
 
-path_input = dp.rootFolder / 'data'
-
 def etl_ot():
-    logger = logger()
+    path_input = dp.rootFolder / 'data'
 
-    logger.info('Inicio ETL Ot')
+    dp.logger.info('Inicio ETL Ot')
 
     # Crear una instancia de la sesión ORM
     session = Session(engine)
@@ -922,4 +920,4 @@ def etl_ot():
 
     # session.close()
 
-    logger.info('Fin ETL Ot')
+    dp.logger.info('Fin ETL Ot')
