@@ -63,7 +63,7 @@ path_input_nuevos = dp.rootFolder / 'data' / 'nuevos_datos'
 # Leer datos nuevos TENIENDO EN CUENTA QUE ESTE SEA EL FORMATO
 
 file_name = 'bbdd_distribucion.xlsx'
-sheet_name = busqueda_hoja(file_name=file_name)
+sheet_name = busqueda_hoja(file_pathname=path_input_nuevos / file_name, sheet_name='base  datos')
 
 df_distribucion_nuevos = pd.read_excel(
     path_input_nuevos / file_name,
