@@ -16,9 +16,9 @@ def columnas_texto(columna, formato):
     """
     if formato == "capitalize":
         columna = columna.str.capitalize()
-    if formato == "upper":
+    elif formato == "upper":
         columna = columna.str.upper()
-    if formato == "lower":
+    elif formato == "lower":
         columna = columna.str.lower()
     else:
         columna = columna.str.title()
