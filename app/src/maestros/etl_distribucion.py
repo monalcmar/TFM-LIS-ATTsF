@@ -21,6 +21,7 @@ from models.model import Tipo_vehiculo
 from models.model import Distribucion
 from utils.functions import columnas_texto
 from utils.functions import busqueda_hoja
+from utils.functions import find_file
 
 def etl_distribucion():
     logger = logger()
@@ -56,17 +57,17 @@ def etl_distribucion():
     # ===== Cargar nuevos datos =====
 
     # crear path de origen de nuevos datos
-    path_input_nuevos = dp.rootFolder / 'data' / 'nuevos_datos'
+    path_input = dp.rootFolder / 'data'
 
     # ===== Hacer merge de los nuevos datos con los maestros =====
 
     # Leer datos nuevos
 
-    file_name = 'bbdd_distribucion.xlsx'
-    sheet_name = busqueda_hoja(file_pathname=path_input_nuevos / file_name, sheet_name='base  datos')
+    file_name = find_file(path=path_input, name='bbdd_distribucion.xlsx')
+    sheet_name = busqueda_hoja(file_pathname=path_input / file_name, sheet_name='base  datos')
 
     df_distribucion_nuevos = pd.read_excel(
-        path_input_nuevos / file_name,
+        path_input / file_name,
         sheet_name=sheet_name,  
         usecols='A, B, C, D, E, F, G, I, J, K, L, M, N, AC, AD',
         names=['no_serie', 'conductor', 'nombre_attsf', 'fecha_salida', 'hora_salida',
@@ -92,6 +93,50 @@ def etl_distribucion():
 
     # nos quedamos solo con los datos a partir de la última fecha y hora de registro
     df_distribucion_nuevos = df_distribucion_nuevos[df_distribucion_nuevos['salida_fecha_hora'] >= ultimo_salida_fecha_hora]
+
+    # Diccionario para unificación de conductores
+    d_unificados_conductor = {'Abdelmula Abeida Aomar': ['Abdelmula', 'Abbelmula', 'Abdeimula', 'Abdelmaula'],
+                              'Ahmed Salem  Mahfud': ['Ahmed Salem'],
+                              'Brahimsalem Selma Nayem': ['Brahim Salma', 'Brahim Salem Salma'],
+                              'Bolla Ahmed Baba': ['Bolla'],
+                              'Embarec Ahmed Ahmed': ['Embarek Ahmed', 'Embarec Ahmed', 'Embarec Ahmed Ahmed Ahmed'],
+                              'Hasenna Lehbib Sidtagui': ['Hasana Lehbib'],
+                              'Lejlifa  Mohamed Fadel': ['Lajlifa Moh. Fadel', 'Lajlifa Moh.Fadel', 'Lalifa Moh. Fadel', 'Lejlifa Mohamed Fadel'],
+                              'Limam Mohamed Mehdi': ['Limam Moh. Mehdi', 'Limam Moh-Mehdi', 'Limam Moh. Mehadi'],
+                              'Mahfud Mohamed-Mehdi': ['Mahfud Moh-Mehdi'],
+                              'Malainin  Baba Hassana': ['Malainin'],
+                              'Mohamed Baba': ['Mohames Baba'],
+                              'Said Allal Daf': ['Said Al-Lal', 'Said Alal'],
+                              'Said  Nafii Mahyub': ['Said Nafi', 'Saiid Nafi'],
+                              'Salma Mujtar': ['Salma Mojtar', 'Selma Mujtar'],
+                              'Saleh Musa Mohamed Lamin': ['Saleh Musa'],
+                              'Seilum Mohamed Abdelgader': ['Seilum'],
+                              'Selma Mojtar Zein': ['Salma Mujtar'],
+                              'Ramdan Sleiman Mahmud': ['Ramdan'],
+                              'Hassena Lehbib': ['Haswna Lehbib', 'Hasenna Lehbib'],
+                              'Buel-La': ['Buel-lla', 'Buel-Lla'],
+                              'Larbana Hamudi': ['Iarbana Hamudi'],
+                              'Mohamed': ['Mohamwd'],
+                              'Jalifa Mohamed': ['Jalifa Mohamd']}
+   
+    # Bucle que unifica los datos de la columna conductor
+    for i in range(0, len(df_distribucion_nuevos['conductor'])):
+        for key in d_unificados_conductor.keys():
+            for value in d_unificados_conductor[key]:
+                if value in df_distribucion_nuevos.loc[i, 'conductor']:
+                    df_distribucion_nuevos.loc[i, 'conductor'] = df_distribucion_nuevos.loc[i, 'conductor'].replace(value, key)
+
+    # Diccionario para unificación de wilayas
+    d_unificados_wilaya = {'Aaiun': ['Aaiún', 'Aiun'],
+                           'Bojador': ['Bujador', 'Bujdur'],
+                           'Rabouni': ["Rabuni"]}
+
+    # Bucle que unifica los datos
+    for i in range(0, len(df_distribucion_nuevos['wilaya'])):
+        for key in d_unificados_wilaya.keys():
+            for value in d_unificados_wilaya[key]:
+                if value in df_distribucion_nuevos.loc[i, 'wilaya']:
+                    df_distribucion_nuevos.loc[i, 'wilaya'] = df_distribucion_nuevos.loc[i, 'wilaya'].replace(value, key)
 
     # generación de merges de nuevos datos con los maestros
     df_distribucion_nuevos = pd.merge(left=df_distribucion_nuevos, right=df_personal[['id_personal', 'nombre']],
