@@ -316,7 +316,7 @@ def etl_ot():
     # Encuentra las palabras "Camión" seguidas de un número
     patron = re.compile(r'CAMIÓN (\d+)')
     # Aplicamos la funcion de reemplazo en la columna 'camion'
-    df_ot['camion'] = df_ot['camion'].str.replace(patron, replace_camion)
+    df_ot['camion'] = df_ot['camion'].str.replace(patron, replace_camion, regex=True)
 
     # Merge de ot e id_camion
     df_ot = pd.merge(df_ot, df_camion.loc[:, ['id_camion', 'nombre_attsf', 'id_wilaya', 'id_tipo_vehiculo']], how='left', left_on='camion', right_on='nombre_attsf')

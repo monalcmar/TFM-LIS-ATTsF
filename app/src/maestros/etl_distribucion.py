@@ -9,7 +9,6 @@ import datetime
 import re
 import numpy as np
 # =========== Modulos propios ===========
-from logger.logger import logger
 from src.distribucion.etl import etl_distribucion
 import dependencies as dp
 from db.connection import engine, conn
@@ -22,10 +21,9 @@ from models.model import Distribucion
 from utils.functions import columnas_texto
 from utils.functions import busqueda_hoja
 
-def etl_distribucion():
-    logger = logger()
 
-    logger.info('Inicio ETL Distribucion')
+def etl_distribucion():
+    dp.logger.info('Inicio ETL Distribucion')
 
     session = Session(engine)
 
@@ -145,4 +143,4 @@ def etl_distribucion():
 
     df_distribucion_nuevos.to_sql('tbl_distribucion', con=engine, if_exists='append', index=False)
 
-    logger.info('Fin ETL Distribucion')
+    dp.logger.info('Fin ETL Distribucion')
