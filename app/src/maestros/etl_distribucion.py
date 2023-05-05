@@ -61,7 +61,7 @@ def etl_distribucion():
 
     # Leer datos nuevos
 
-    file_name = find_file(path=path_input, name='bbdd_distribucion.xlsx')
+    file_name = find_file(path=path_input, name='Distribuci')
     sheet_name = busqueda_hoja(file_pathname=path_input / file_name, sheet_name='base  datos')
 
     df_distribucion_nuevos = pd.read_excel(
