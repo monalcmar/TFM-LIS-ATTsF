@@ -61,18 +61,28 @@ def etl_distribucion():
 
     # Leer datos nuevos
 
-    file_name = find_file(path=path_input, name='bbdd_distribucion.xlsx')
+    file_name = find_file(path=path_input, name='Distrib')
     sheet_name = busqueda_hoja(file_pathname=path_input / file_name, sheet_name='base  datos')
 
     df_distribucion_nuevos = pd.read_excel(
         path_input / file_name,
-        sheet_name=sheet_name,  
+        sheet_name=sheet_name,
         usecols='A, B, C, D, E, F, G, I, J, K, L, M, N, AC, AD',
         names=['no_serie', 'conductor', 'nombre_attsf', 'fecha_salida', 'hora_salida',
                'fecha_llegada', 'hora_llegada', 'km_salida', 'km_llegada', 'km_totales',
                'tm', 'tipo_producto', 'wilaya', 'incidencias', 'observaciones'],
         header=2)
     df_distribucion_nuevos = df_distribucion_nuevos.dropna(how='all')
+    df_distribucion_nuevos.dropna(subset=['no_serie'], inplace=True)
+    df_distribucion_nuevos.dropna(subset=['nombre_attsf'], inplace=True)
+
+    # Verificaicion de hora llegada 
+    df_distribucion_nuevos['hora_llegada'] = df_distribucion_nuevos['hora_llegada'].astype(str)
+
+    # Sustitucion de valores de hora_llegada 
+    mask = df_distribucion_nuevos['hora_llegada'].str.len() > 8
+    df_distribucion_nuevos.loc[mask, 'hora_llegada'] = df_distribucion_nuevos.loc[mask, 'hora_llegada'].str[-8:].apply(lambda x: '12:00:00' if x == '00:00:00' else x)
+
 
     # union de fechas y horas
     df_distribucion_nuevos['salida_fecha_hora'] = pd.to_datetime(df_distribucion_nuevos['fecha_salida']).dt.date.astype(str) + ' ' + df_distribucion_nuevos['hora_salida'].astype(str)
