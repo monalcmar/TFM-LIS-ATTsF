@@ -91,7 +91,6 @@ def etl_ot():
     # SE QUITAN LOS DATOS QUE NO TIENEN FECHA DE INICIO
     df_ot_prev.dropna(subset=['fecha_inicio'], inplace=True)
 
-
     # Se cambian los nan por un tipo de frecuencia 'No frecuencia'
     df_ot_prev['frecuencia'] = df_ot_prev['frecuencia'].fillna('No frecuencia')
 
@@ -108,10 +107,10 @@ def etl_ot():
     df_ot_prev['frecuencia'] = columnas_texto(df_ot_prev['frecuencia'], 'capitalize')
 
     columnas_repuestos = ['aceite motor', 'anticongelante', 'liquido de embrague',
-                        'liquido direccion', 'acido baterias', 'liquido de freno',
-                        'aceite caja cambios', 'agua destilada', 'ruedas',
-                        'lamparas', 'd/tacgfo', 's. lava', 'j. carroceria',
-                        'calcho', 'grasa']
+                          'liquido direccion', 'acido baterias', 'liquido de freno',
+                          'aceite caja cambios', 'agua destilada', 'ruedas',
+                          'lamparas', 'd/tacgfo', 's. lava', 'j. carroceria',
+                          'calcho', 'grasa']
 
     df_ot_prev['aceite motor'] = pasar_a_int(df_ot_prev, 'aceite motor')
     df_ot_prev['anticongelante'] = pasar_a_int(df_ot_prev, 'anticongelante')
@@ -138,7 +137,7 @@ def etl_ot():
                                     'mohamed salem mohamed': 'Mohamed Salem Mohamed Alamin',
                                     'mohamidy emhamed brahim': 'Mohamidi Emhamed Brahim',
                                     'salek mohamed salem': 'Salec Mohamed Salem'}, inplace=True)
-    # mecanicos que no se saben:                                
+    # mecanicos que no se saben:
     # 'hamdi moh lamin': None, 'jefe taller': None,
     # 'mrabihrabu hamudi': None, 'omar ahmed mohamed': None,
 
@@ -160,17 +159,16 @@ def etl_ot():
 
     # Se define el dataframe de ot repuesto (se usara mas adelante)
     df_ot_repuesto = df_ot_prev[['ot', 'aceite motor', 'anticongelante', 'liquido de embrague',
-                                'liquido direccion', 'acido baterias', 'liquido de freno',
-                                'aceite caja cambios', 'agua destilada', 'ruedas',
-                                'lamparas', 'd/tacgfo', 's. lava', 'j. carroceria',
-                                'calcho', 'grasa']]
+                                 'liquido direccion', 'acido baterias', 'liquido de freno',
+                                 'aceite caja cambios', 'agua destilada', 'ruedas',
+                                 'lamparas', 'd/tacgfo', 's. lava', 'j. carroceria',
+                                 'calcho', 'grasa']]
 
     # Se toman las columnas deseadas
     df_ot_prev = df_ot_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
-                            'mecanico', 'fecha_inicio', 'fecha_fin',
-                            'descripcion_trabajo_solicitado',
-                            'descripcion_trabajo_realizado', 'observacion']]
-
+                             'mecanico', 'fecha_inicio', 'fecha_fin',
+                             'descripcion_trabajo_solicitado',
+                             'descripcion_trabajo_realizado', 'observacion']]
 
     # ######################################### CORRECTIVO #########################################
 
@@ -238,7 +236,6 @@ def etl_ot():
     df_ot_corr['aire'] = pasar_a_int(df_ot_corr, 'aire')
     df_ot_corr['maquinaria'] = pasar_a_int(df_ot_corr, 'maquinaria')
 
-
     # ---------------------------------------------
     # Se reemplazan los valores de mecanico
     df_ot_corr['mecanico'].replace({'abba hamdi': 'abba hamdi mohamed salem',
@@ -255,7 +252,6 @@ def etl_ot():
     # 'logista': None, 'mohamed lamin': None, 'mrabihrabu hamudi': None,
     # 'omar ahmed mohamed': None, 'sidati mahfud': None, 'todos': None
 
-
     # Se resetea el index por los valores eliminados
     df_ot_corr.reset_index(inplace=True, drop=True)
 
@@ -269,15 +265,14 @@ def etl_ot():
     # ---------------------------------------------
     # Se define el dataframe de ot averia (se usara mas adelante)
     df_ot_averia = df_ot_corr[['ot', 'chasis', 'carroceria', 'ruedas', 'elec, vehiculos',
-                            'obra civil', 'agua y combustible', 'herramientas',
-                            'informatica', 'exteriores', 'aire', 'maquinaria']]
+                               'obra civil', 'agua y combustible', 'herramientas',
+                               'informatica', 'exteriores', 'aire', 'maquinaria']]
 
     # Se toman las columnas deseadas
     df_ot_corr = df_ot_corr[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
-                            'mecanico', 'fecha_inicio', 'fecha_fin',
-                            'descripcion_trabajo_solicitado',
-                            'descripcion_trabajo_realizado', 'observacion']]
-
+                             'mecanico', 'fecha_inicio', 'fecha_fin',
+                             'descripcion_trabajo_solicitado',
+                             'descripcion_trabajo_realizado', 'observacion']]
 
     # ######################################### UNION #########################################
 
@@ -286,8 +281,8 @@ def etl_ot():
 
     # Se toman las columnas deseadas
     df_ot = df_ot[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller', 'mecanico',
-                'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
-                'descripcion_trabajo_realizado', 'observacion']]
+                   'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
+                   'descripcion_trabajo_realizado', 'observacion']]
 
     # Se quitan los indices anteriores ya que se repiten cada anho
     df_ot.reset_index(inplace=True, drop=True)
@@ -295,10 +290,10 @@ def etl_ot():
     # -------------------------CAMION NUM Y MAS CAMIONES-----------------------------------------------------
     # Lista de "camiones" a eliminar (en la columna camiones hay nombres que no son camiones)
     nombres_a_eliminar = ['INSTALACIONES', 'AUTORIZADOS', 'SIERRA', 'GRUPO ELECTRÓGENO',
-                        'M. RUEDAS', 'COLUMNA ELEVADORA', 'TORNO', 'TALADRO',
-                        'COMPRESOR Nº 2', 'COMPRESOR Nº 1', 'PRENSA', 'HIDROLAVADORA',
-                        'SIST. COMBUSTIBLE', 'SIST. AIRE', 'SIST. AGUA', 'GRUPO ELECGENO',
-                        'OTROS']
+                          'M. RUEDAS', 'COLUMNA ELEVADORA', 'TORNO', 'TALADRO',
+                          'COMPRESOR Nº 2', 'COMPRESOR Nº 1', 'PRENSA', 'HIDROLAVADORA',
+                          'SIST. COMBUSTIBLE', 'SIST. AIRE', 'SIST. AGUA', 'GRUPO ELECGENO',
+                          'OTROS']
 
     # Seleccionamos las filas que contienen los nombres a eliminar
     df_nocamiones = df_ot.loc[df_ot['camion'].isin(nombres_a_eliminar)]
@@ -316,7 +311,7 @@ def etl_ot():
     # Encuentra las palabras "Camión" seguidas de un número
     patron = re.compile(r'CAMIÓN (\d+)')
     # Aplicamos la funcion de reemplazo en la columna 'camion'
-    df_ot['camion'] = df_ot['camion'].str.replace(patron, replace_camion)
+    df_ot['camion'] = df_ot['camion'].str.replace(patron, replace_camion, regex=True)
 
     # Merge de ot e id_camion
     df_ot = pd.merge(df_ot, df_camion.loc[:, ['id_camion', 'nombre_attsf', 'id_wilaya', 'id_tipo_vehiculo']], how='left', left_on='camion', right_on='nombre_attsf')
@@ -338,8 +333,8 @@ def etl_ot():
     df_ot = df_ot.drop(['wilaya', 'id_tipo_vehiculo'], axis=1)
     # ---------------------------------------------
 
-    # Merge de ot e id_taller 
-    df_ot = pd.merge(df_ot, df_taller.loc[:, ['id_taller', 'taller']], how='left', on='taller') 
+    # Merge de ot e id_taller
+    df_ot = pd.merge(df_ot, df_taller.loc[:, ['id_taller', 'taller']], how='left', on='taller')
     # Eliminar columna taller
     df_ot = df_ot.drop('taller', axis=1)
     # Como salen Nan hay que pasarlo a int
@@ -372,9 +367,8 @@ def etl_ot():
 
     # Se reordenan las columnas
     df_ot = df_ot[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
-                'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
-                'descripcion_trabajo_realizado', 'observacion']]
-
+                   'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
+                   'descripcion_trabajo_realizado', 'observacion']]
 
     # ------------------------------------------------------------ AGUA ------------------------------------------------------------
 
@@ -414,7 +408,6 @@ def etl_ot():
     # SE QUITAN LOS DATOS QUE NO TIENEN FECHA DE INICIO
     df_ot_agua_prev.dropna(subset=['fecha_inicio'], inplace=True)
 
-
     # Se cambian los nan por un tipo de frecuencia 'No frecuencia'
     df_ot_agua_prev['frecuencia'] = df_ot_agua_prev['frecuencia'].fillna('No frecuencia')
 
@@ -432,8 +425,8 @@ def etl_ot():
     # df_ot_agua_prev['coste'] = df_ot_agua_prev['coste'].astype(float)
 
     columnas_litros = ['aceite motor', 'anticongelante', 'liquido de embrague',
-                    'liquido direccion', 'liquido de freno', 'agua destilada', 'aceite caja cambios',
-                    'acido baterias']
+                       'liquido direccion', 'liquido de freno', 'agua destilada', 'aceite caja cambios',
+                       'acido baterias']
     df_ot_agua_prev['aceite motor'] = pasar_a_int(df_ot_agua_prev, 'aceite motor')
     df_ot_agua_prev['anticongelante'] = pasar_a_int(df_ot_agua_prev, 'anticongelante')
     df_ot_agua_prev['liquido de embrague'] = pasar_a_int(df_ot_agua_prev, 'liquido de embrague')
@@ -447,7 +440,7 @@ def etl_ot():
     df_ot_agua_prev['grasa'] = pasar_a_int(df_ot_agua_prev, 'grasa')
 
     columnas_unidades = ['filtro de aceite', 'filtro de aire', 'filtro de gasoil',
-                        'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',]
+                         'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',]
     df_ot_agua_prev['filtro de aceite'] = pasar_a_int(df_ot_agua_prev, 'filtro de aceite')
     df_ot_agua_prev['filtro de aire'] = pasar_a_int(df_ot_agua_prev, 'filtro de aire')
     df_ot_agua_prev['filtro de gasoil'] = pasar_a_int(df_ot_agua_prev, 'filtro de gasoil')
@@ -458,9 +451,9 @@ def etl_ot():
     # ---------------------------------------------
     # Se reemplazan los valores de taller
     df_ot_agua_prev = df_ot_agua_prev.replace({'taller': {'ATC RABUNI': 'CLM', 'TR AAIUN': 'Aaiun',
-                                                        'TR AUSERD': 'Auserd', 'TR BOUJDUR': 'Bojador',
-                                                        'TR DAJLA': 'Dajla', 'TR SMARA': 'Smara',
-                                                        'TR TRANSPORT': 'BDT'}})
+                                                          'TR AUSERD': 'Auserd', 'TR BOUJDUR': 'Bojador',
+                                                          'TR DAJLA': 'Dajla', 'TR SMARA': 'Smara',
+                                                          'TR TRANSPORT': 'BDT'}})
 
     # Se resetea el index
     df_ot_agua_prev.reset_index(inplace=True, drop=True)
@@ -485,17 +478,16 @@ def etl_ot():
 
     # Se define el dataframe de ot repuesto (se usara mas adelante)
     df_ot_agua_repuesto = df_ot_agua_prev[['ot', 'aceite motor', 'anticongelante', 'liquido de embrague',
-                                        'liquido direccion', 'liquido de freno', 'agua destilada',
-                                        'aceite caja cambios', 'acido baterias', 'grasa', 'filtro de aceite',
-                                        'filtro de aire', 'filtro de gasoil', 'filtro hidraulico',
-                                        'filtro separador de gasoil', 'pre-filtro de gasoil']]
+                                           'liquido direccion', 'liquido de freno', 'agua destilada',
+                                           'aceite caja cambios', 'acido baterias', 'grasa', 'filtro de aceite',
+                                           'filtro de aire', 'filtro de gasoil', 'filtro hidraulico',
+                                           'filtro separador de gasoil', 'pre-filtro de gasoil']]
 
     # Se toman las columnas deseadas
     df_ot_agua_prev = df_ot_agua_prev[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
-                                    'mecanico', 'fecha_inicio', 'fecha_fin',
-                                    'descripcion_trabajo_solicitado',
-                                    'descripcion_trabajo_realizado', 'observacion']]
-
+                                       'mecanico', 'fecha_inicio', 'fecha_fin',
+                                       'descripcion_trabajo_solicitado',
+                                       'descripcion_trabajo_realizado', 'observacion']]
 
     # ######################################### CORRECTIVO #########################################
 
@@ -551,9 +543,9 @@ def etl_ot():
     # ---------------------------------------------
     # Se reemplazan los valores de taller
     df_ot_agua_corr = df_ot_agua_corr.replace({'taller': {'ATC RABUNI': 'CLM', 'TR AAIUN': 'Aaiun',
-                                                        'TR AUSERD': 'Auserd', 'TR BOUJDUR': 'Bojador',
-                                                        'TR DAJLA': 'Dajla', 'TR SMARA': 'Smara',
-                                                        'TR TRANSPORT': 'BDT'}})
+                                                          'TR AUSERD': 'Auserd', 'TR BOUJDUR': 'Bojador',
+                                                          'TR DAJLA': 'Dajla', 'TR SMARA': 'Smara',
+                                                          'TR TRANSPORT': 'BDT'}})
 
     # ---------------------------------------------
     # Crear una columna de frecuencia = 'No frecuencia'
@@ -561,7 +553,6 @@ def etl_ot():
 
     # Crear una columna de tipo_ot = 'Correctivo'
     df_ot_agua_corr['tipo_ot'] = 'Correctivo'
-
 
     # Se reemplazan los nombres de los mecanicos
     df_ot_agua_corr = df_ot_agua_corr.replace({'mecanico': {'Saleh': 'Saleh Mohamed Salma',
@@ -590,10 +581,9 @@ def etl_ot():
 
     # Se toman las columnas deseadas
     df_ot_agua_corr = df_ot_agua_corr[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
-                                    'mecanico', 'fecha_inicio', 'fecha_fin',
-                                    'descripcion_trabajo_solicitado',
-                                    'descripcion_trabajo_realizado', 'observacion']]
-
+                                       'mecanico', 'fecha_inicio', 'fecha_fin',
+                                       'descripcion_trabajo_solicitado',
+                                       'descripcion_trabajo_realizado', 'observacion']]
 
     # ######################################### UNION #########################################
 
@@ -602,8 +592,8 @@ def etl_ot():
 
     # Se toman las columnas deseadas
     df_ot_agua = df_ot_agua[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller', 'mecanico',
-                            'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
-                            'descripcion_trabajo_realizado', 'observacion']]
+                             'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
+                             'descripcion_trabajo_realizado', 'observacion']]
 
     # Se quitan los indices anteriores ya que se repiten cada anho
     df_ot_agua.reset_index(inplace=True, drop=True)
@@ -620,7 +610,7 @@ def etl_ot():
     # ---------------TALLER VACIO ---------------
     # Como hay talleres vacios se extraen del camion y las wilayas
     df_ot_agua = pd.merge(df_ot_agua, df_camion.loc[:, ['nombre_attsf', 'id_wilaya', 'id_tipo_vehiculo']],
-                        how='left', left_on='camion', right_on='nombre_attsf')
+                          how='left', left_on='camion', right_on='nombre_attsf')
     df_ot_agua = pd.merge(df_ot_agua, df_wilaya.loc[:, ['id_wilaya', 'wilaya']], how='left', on='id_wilaya')
     # Eliminar columna id_wilaya, camion, nombre_attsf
     df_ot_agua = df_ot_agua.drop(['id_wilaya', 'camion', 'nombre_attsf'], axis=1)
@@ -669,9 +659,8 @@ def etl_ot():
 
     # Se reordenan las columnas
     df_ot_agua = df_ot_agua[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
-                            'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
-                            'descripcion_trabajo_realizado', 'observacion']]
-
+                             'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
+                             'descripcion_trabajo_realizado', 'observacion']]
 
     # ------------------------------------------------------------ UNION OTS ------------------------------------------------------------
     # Concat de ambos dataframes
@@ -679,8 +668,8 @@ def etl_ot():
 
     # Se toman las columnas deseadas
     df_ot_union = df_ot_union[['ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
-                            'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
-                            'descripcion_trabajo_realizado', 'observacion']]
+                               'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
+                               'descripcion_trabajo_realizado', 'observacion']]
 
     # Se quitan los indices anteriores ya que se repiten cada anho
     df_ot_union.reset_index(inplace=True, drop=True)
@@ -704,9 +693,8 @@ def etl_ot():
 
     # Se reordenan las columnas
     df_ot_union = df_ot_union[['id_ot', 'ot', 'id_camion', 'id_tipo_ot', 'id_frecuencia', 'id_taller',
-                            'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
-                            'descripcion_trabajo_realizado', 'observacion']]
-
+                               'id_mecanico', 'fecha_inicio', 'fecha_fin', 'descripcion_trabajo_solicitado',
+                               'descripcion_trabajo_realizado', 'observacion']]
 
     # ######################################### CAMIONES #########################################
     # Camiones de NO alimentos
@@ -775,7 +763,7 @@ def etl_ot():
     # ------------------ Quitar averias ---------------------------
     # Creamos una lista con los repuesto a quitar
     nombres_a_quitar_agua = ['electricidad', 'agua y combustible', 'aire', 'exteriores', 'herramientas',
-                            'informatica', 'maquinaria', 'obra civil']
+                             'informatica', 'maquinaria', 'obra civil']
     # Seleccionamos las filas que contienen los nombres a eliminar
     filas_a_eliminar_agua = df_tipo_averia_agua.loc[df_tipo_averia_agua['averia'].isin(nombres_a_quitar_agua)]
     # Eliminamos las filas seleccionadas
@@ -813,10 +801,10 @@ def etl_ot():
 
     # Se crea la lista de repuestos
     df_tipo_repuesto = pd.DataFrame({'repuesto': ['aceite motor', 'anticongelante', 'liquido de embrague', 'liquido direccion',
-                                                'liquido de freno', 'agua destilada', 'aceite caja cambios', 'acido baterias',
-                                                'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
-                                                'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',
-                                                'ruedas', 'lamparas', 'd/tacgfo', 's. lava', 'j. carroceria', 'calcho']})
+                                                  'liquido de freno', 'agua destilada', 'aceite caja cambios', 'acido baterias',
+                                                  'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
+                                                  'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',
+                                                  'ruedas', 'lamparas', 'd/tacgfo', 's. lava', 'j. carroceria', 'calcho']})
 
     # Creamos una lista con los repuesto a quitar
     nombres_a_quitar = ['filtro de aceite', 'filtro de aire', 'filtro de gasoil',
@@ -855,17 +843,17 @@ def etl_ot():
     df_ot_repuesto = df_ot_repuesto.drop('repuesto', axis=1)
     # Como todos los id_ot nan estan en df_nocamiones esas ots no pertenecen a los camiones
     # hay averias que no tienen ot porque se han quitado las instalaciones en la columna 'camion'
-    df_ot_repuesto.dropna(subset=['id_ot'], inplace=True) 
+    df_ot_repuesto.dropna(subset=['id_ot'], inplace=True)
     df_ot_repuesto['id_ot'] = df_ot_repuesto['id_ot'].astype(int)
 
     # ######################################### OT REPUESTO AGUA #########################################
 
     # Se crea la lista de repuestos
     df_tipo_repuesto_agua = pd.DataFrame({'repuesto': ['aceite motor', 'anticongelante', 'liquido de embrague', 'liquido direccion',
-                                                    'liquido de freno', 'agua destilada', 'aceite caja cambios', 'acido baterias',
-                                                    'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
-                                                    'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',
-                                                    'ruedas', 'lamparas', 'd/tacgfo', 's. lava', 'j. carroceria', 'calcho']})
+                                                       'liquido de freno', 'agua destilada', 'aceite caja cambios', 'acido baterias',
+                                                       'grasa', 'filtro de aceite', 'filtro de aire', 'filtro de gasoil',
+                                                       'filtro hidraulico', 'filtro separador de gasoil', 'pre-filtro de gasoil',
+                                                       'ruedas', 'lamparas', 'd/tacgfo', 's. lava', 'j. carroceria', 'calcho']})
 
     # Creamos una lista con los repuesto a quitar
     nombres_a_quitar_agua = ['calcho', 'd/tacgfo', 'j. carroceria', 'lamparas', 'ruedas', 's. lava']
