@@ -914,9 +914,9 @@ def etl_ot():
 
     session = Session(engine)
 
-    df_ot.to_sql('tbl_ot', con=engine, if_exists='append', index=False)
-    df_ot_averia.to_sql('tbl_ot_averia', con=engine, if_exists='append', index=False)
-    df_ot_repuesto.to_sql('tbl_ot_repuesto', con=engine, if_exists='append', index=False)
+    df_ot_union.to_sql('tbl_ot', con=engine, if_exists='append', index=False)
+    df_ot_averia_union.to_sql('tbl_ot_averia', con=engine, if_exists='append', index=False)
+    df_ot_repuesto_union.to_sql('tbl_ot_repuesto', con=engine, if_exists='append', index=False)
 
     session.close()
 
