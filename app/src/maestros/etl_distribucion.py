@@ -96,7 +96,7 @@ def etl_distribucion():
     # gestion columnas de texto
     df_distribucion_nuevos['conductor'] = columnas_texto(df_distribucion_nuevos['conductor'], 'title')
     df_distribucion_nuevos['wilaya'] = columnas_texto(df_distribucion_nuevos['wilaya'], 'title')
-    df_distribucion_nuevos['nombre_attsf'] = columnas_texto(df_distribucion_nuevos['nombre_attsf'], 'upper')
+    df_distribucion_nuevos['nombre_attsf'] = columnas_texto(df_distribucion_nuevos['nombre_attsf'].astype(int).astype(str), 'upper')
     df_distribucion_nuevos['tipo_producto'] = columnas_texto(df_distribucion_nuevos['tipo_producto'], 'upper')
 
     # nos quedamos solo con los datos a partir de la última fecha y hora de registro
@@ -127,6 +127,8 @@ def etl_distribucion():
                               'Mohamed': ['Mohamwd'],
                               'Jalifa Mohamed': ['Jalifa Mohamd']}
    
+    df_distribucion_nuevos.reset_index(inplace=True, drop=True)
+    
     # Bucle que unifica los datos de la columna conductor
     for i in range(0, len(df_distribucion_nuevos['conductor'])):
         for key in d_unificados_conductor.keys():
