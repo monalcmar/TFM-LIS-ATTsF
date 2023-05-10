@@ -9,4 +9,4 @@ from src.maestros.etl_distribucion import etl_distribucion
 etl_ot()
 
 # etl distribucion
-etl_distribucion()
+# etl_distribucion()

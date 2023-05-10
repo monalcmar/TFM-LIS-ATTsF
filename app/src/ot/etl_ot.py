@@ -4,6 +4,7 @@ import re
 import datetime
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
+from sqlalchemy import not_
 # =========== Modulos propios ===========
 from logger.logger import logger
 # from src.ot.etl import etl.ot
@@ -47,11 +48,23 @@ def etl_ot():
     df_wilaya = pd.read_sql(session.query(Wilaya).statement, conn)
 
     # Obtener la ultima fecha, el ultimo id_ot y los ots que tienen la ultima fecha
-    ultima_fecha = session.query(Ot.fecha_inicio).filter(Ot.fecha_inicio != None).order_by(Ot.fecha_inicio.desc()).first()[0]
+    # ultima_fecha = session.query(Ot.fecha_inicio).filter(Ot.fecha_inicio != None).order_by(Ot.fecha_inicio.desc()).first()[0]
+
+    # Se obtiene la ultima id_ot de la base de datos
     ultima_id_ot = session.query(Ot.id_ot).order_by(Ot.id_ot.desc()).first()[0]
+    # Se obtienen los camiones de alimentos
+    camion_alimentos = [id_camion[0] for id_camion in session.query(Camion.id_camion).filter(Camion.id_tipo_vehiculo == 3).all()]
+
+    # Se obtiene la ultima fecha de camiones de agua (correctivos y preventivos)
+    ultima_fecha_agua_corr = session.query(Ot.fecha_inicio).filter(not_(Ot.id_camion.in_(camion_alimentos))).filter(Ot.id_tipo_ot == 1).order_by(Ot.fecha_inicio.desc()).first()[0]
+    ultima_fecha_agua_prev = session.query(Ot.fecha_inicio).filter(not_(Ot.id_camion.in_(camion_alimentos))).filter(Ot.id_tipo_ot == 2).order_by(Ot.fecha_inicio.desc()).first()[0]
+    
+    # Se obtiene la ultima fecha de camiones de alimentos (correctivos y preventivos)
+    ultima_fecha_alimentos_corr = session.query(Ot.fecha_inicio).filter(Ot.id_camion.in_(camion_alimentos)).filter(Ot.id_tipo_ot == 1).order_by(Ot.fecha_inicio.desc()).first()[0]
+    ultima_fecha_alimentos_prev = session.query(Ot.fecha_inicio).filter(Ot.id_camion.in_(camion_alimentos)).filter(Ot.id_tipo_ot == 2).order_by(Ot.fecha_inicio.desc()).first()[0]
 
     # Se toman las ots que tienen la ultima fecha
-    ot_ultima_fecha = [ot[0] for ot in session.query(Ot.ot).filter(Ot.fecha_inicio == ultima_fecha).all()]
+    ot_ultima_fecha = [str(int(float(ot[0]))) for ot in session.query(Ot.ot).filter(Ot.fecha_inicio.in_([ultima_fecha_agua_corr, ultima_fecha_agua_prev, ultima_fecha_alimentos_corr, ultima_fecha_alimentos_prev])).all()]
 
     session.close()
 
@@ -68,7 +81,7 @@ def etl_ot():
         file_prev,
         sheet_name=sheet_prev,
         usecols='A, C, D, E, I, K, P:AD, AE, AH',
-        skiprows=6,
+        skiprows=5,
         parse_dates=['fecha_inicio', 'fecha_fin'],
         names=['camion', 'ot', 'frecuencia', 'mecanico', 'fecha_inicio', 'fecha_fin',
                 'aceite motor', 'anticongelante', 'liquido de embrague',
@@ -78,9 +91,9 @@ def etl_ot():
                 'observacion'])
 
     # Convertir la fecha a tipo datetime64[ns]
-    ultima_fecha = np.datetime64(ultima_fecha)
+    ultima_fecha_alimentos_prev = np.datetime64(ultima_fecha_alimentos_prev)
     # Seleccionar las filas que tienen fecha posterior a la fecha de referencia
-    df_ot_prev = df_prev.loc[df_prev['fecha_inicio'] >= ultima_fecha]
+    df_ot_prev = df_prev.loc[df_prev['fecha_inicio'] >= ultima_fecha_alimentos_prev]
 
     # Se eliminan las filas con valores nan en todas las columnas
     df_ot_prev.dropna(how='all', inplace=True)
@@ -96,7 +109,7 @@ def etl_ot():
 
     # ---------------------------------------------
     # Se limpian los datos
-    df_ot_prev['ot'] = df_ot_prev['ot'].astype(str)
+    df_ot_prev['ot'] = df_ot_prev['ot'].astype(int).astype(str)
     df_ot_prev['ot'] = columnas_texto(df_ot_prev['ot'], 'upper')
 
     df_ot_prev['camion'] = df_ot_prev['camion'].astype(str)
@@ -183,7 +196,7 @@ def etl_ot():
         file_corr,
         sheet_name=sheet_corr,
         usecols='A, C, E, I, K, R:AD, AE, AF, AG',
-        skiprows=5,
+        skiprows=4,
         parse_dates=['fecha_inicio', 'fecha_fin'],
         names=['camion', 'ot', 'mecanico', 'fecha_inicio', 'fecha_fin', 'chasis',
                 'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos', 'obra civil',
@@ -191,8 +204,10 @@ def etl_ot():
                 'aire', 'maquinaria', 'electricidad', 'descripcion_trabajo_solicitado',
                 'descripcion_trabajo_realizado', 'observacion'])
 
+    # Convertir la fecha a tipo datetime64[ns]
+    ultima_fecha_alimentos_corr = np.datetime64(ultima_fecha_alimentos_corr)
     # Seleccionar las filas que tienen fecha igual o posterior a la fecha de referencia
-    df_ot_corr = df_corr.loc[df_corr['fecha_inicio'] >= ultima_fecha]
+    df_ot_corr = df_corr.loc[df_corr['fecha_inicio'] >= ultima_fecha_alimentos_corr]
 
     # Se eliminan las filas con valores nan en todas las columnas
     df_ot_corr.dropna(how='all', inplace=True)
@@ -205,7 +220,7 @@ def etl_ot():
 
     # ---------------------------------------------
     # Se limpian los datos
-    df_ot_corr['ot'] = df_ot_corr['ot'].astype(str)
+    df_ot_corr['ot'] = df_ot_corr['ot'].astype(int).astype(str)
     df_ot_corr['ot'] = columnas_texto(df_ot_corr['ot'], 'upper')
 
     df_ot_corr['camion'] = columnas_texto(df_ot_corr['camion'], 'upper')
@@ -290,7 +305,7 @@ def etl_ot():
     # -------------------------CAMION NUM Y MAS CAMIONES-----------------------------------------------------
     # Lista de "camiones" a eliminar (en la columna camiones hay nombres que no son camiones)
     nombres_a_eliminar = ['INSTALACIONES', 'AUTORIZADOS', 'SIERRA', 'GRUPO ELECTRÓGENO',
-                          'M. RUEDAS', 'COLUMNA ELEVADORA', 'TORNO', 'TALADRO',
+                          'GRUPO ELECROGENO', 'M. RUEDAS', 'COLUMNA ELEVADORA', 'TORNO', 'TALADRO',
                           'COMPRESOR Nº 2', 'COMPRESOR Nº 1', 'PRENSA', 'HIDROLAVADORA',
                           'SIST. COMBUSTIBLE', 'SIST. AIRE', 'SIST. AGUA', 'GRUPO ELECGENO',
                           'OTROS']
@@ -383,9 +398,9 @@ def etl_ot():
     # Se extrae la información del excel de ot preventivo
     df_prev_agua = pd.read_excel(
         file_agua,
-        sheet_name=hoja_agua_prev,
+        sheet_name=sheet_agua_prev,
         usecols='A, B, G, H, I:J, L:Z, AA',
-        skiprows=1,
+        skiprows=0,
         parse_dates=['fecha_inicio', 'fecha_fin'],
         names=['ot', 'camion', 'taller', 'frecuencia', 'fecha_inicio', 'fecha_fin',
                 'aceite motor', 'anticongelante', 'liquido de embrague',
@@ -396,8 +411,10 @@ def etl_ot():
                 'coste mantenimiento']
     )
 
+    # Convertir la fecha a tipo datetime64[ns]
+    ultima_fecha_agua_prev = np.datetime64(ultima_fecha_agua_prev)
     # Seleccionar las filas que tienen fecha posterior a la fecha de referencia
-    df_ot_agua_prev = df_prev_agua.loc[df_prev_agua['fecha_inicio'] >= ultima_fecha]
+    df_ot_agua_prev = df_prev_agua.loc[df_prev_agua['fecha_inicio'] >= ultima_fecha_agua_prev]
 
     # Se eliminan las filas con valores nan en todas las columnas
     df_ot_agua_prev.dropna(how='all', inplace=True)
@@ -413,7 +430,7 @@ def etl_ot():
 
     # ---------------------------------------------
     # Se limpian los datos
-    df_ot_agua_prev['ot'] = df_ot_agua_prev['ot'].astype(str)
+    df_ot_agua_prev['ot'] = df_ot_agua_prev['ot'].astype(int).astype(str)
     df_ot_agua_prev['ot'] = columnas_texto(df_ot_agua_prev['ot'], 'upper')
 
     df_ot_agua_prev['camion'] = columnas_texto(df_ot_agua_prev['camion'], 'upper')
@@ -497,17 +514,19 @@ def etl_ot():
     # Se extrae la información del excel de ot correctivo
     df_corr_agua = pd.read_excel(
         file_agua,
-        sheet_name=hoja_agua_corr,
-        usecols='A, B, C, E, I:J, L:P, Q, R, S',
-        skiprows=10,
+        sheet_name=sheet_agua_corr,
+        usecols='A, B, C, E, I:J, Q, R, S',
+        skiprows=9,
         parse_dates=['fecha_inicio', 'fecha_fin'],
-        names=['camion', 'taller', 'ot', 'mecanico', 'fecha_inicio', 'fecha_fin', 'chasis',
-                'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos',
+        names=['camion', 'taller', 'ot', 'mecanico', 'fecha_inicio', 'fecha_fin',
                 'descripcion_trabajo_solicitado', 'descripcion_trabajo_realizado', 'observacion']
     )
+    # averias: 'chasis', 'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos'
 
+    # Convertir la fecha a tipo datetime64[ns]
+    ultima_fecha_agua_corr = np.datetime64(ultima_fecha_agua_corr)
     # Seleccionar las filas que tienen fecha igual o posterior a la fecha de referencia
-    df_ot_agua_corr = df_corr_agua.loc[df_corr_agua['fecha_inicio'] >= ultima_fecha]
+    df_ot_agua_corr = df_corr_agua.loc[df_corr_agua['fecha_inicio'] >= ultima_fecha_agua_corr]
 
     # Se eliminan las filas con valores nan en todas las columnas
     df_ot_agua_corr.dropna(how='all', inplace=True)
@@ -520,7 +539,7 @@ def etl_ot():
 
     # ---------------------------------------------
     # Se limpian los datos
-    df_ot_agua_corr['ot'] = df_ot_agua_corr['ot'].astype(str)
+    df_ot_agua_corr['ot'] = df_ot_agua_corr['ot'].astype(int).astype(str)
     df_ot_agua_corr['ot'] = columnas_texto(df_ot_agua_corr['ot'], 'upper')
 
     df_ot_agua_corr['camion'] = columnas_texto(df_ot_agua_corr['camion'], 'upper')
@@ -533,12 +552,12 @@ def etl_ot():
 
     df_ot_agua_corr['observacion'] = columnas_texto(df_ot_agua_corr['observacion'], 'capitalize')
 
-    columnas_averias = ['chasis', 'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos']
-    df_ot_agua_corr['chasis'] = pasar_a_int(df_ot_agua_corr, 'chasis')
-    df_ot_agua_corr['carroceria'] = pasar_a_int(df_ot_agua_corr, 'carroceria')
-    df_ot_agua_corr['ruedas'] = pasar_a_int(df_ot_agua_corr, 'ruedas')
-    df_ot_agua_corr['mecanica'] = pasar_a_int(df_ot_agua_corr, 'mecanica')
-    df_ot_agua_corr['elec, vehiculos'] = pasar_a_int(df_ot_agua_corr, 'elec, vehiculos')
+    # columnas_averias = ['chasis', 'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos']
+    # df_ot_agua_corr['chasis'] = pasar_a_int(df_ot_agua_corr, 'chasis')
+    # df_ot_agua_corr['carroceria'] = pasar_a_int(df_ot_agua_corr, 'carroceria')
+    # df_ot_agua_corr['ruedas'] = pasar_a_int(df_ot_agua_corr, 'ruedas')
+    # df_ot_agua_corr['mecanica'] = pasar_a_int(df_ot_agua_corr, 'mecanica')
+    # df_ot_agua_corr['elec, vehiculos'] = pasar_a_int(df_ot_agua_corr, 'elec, vehiculos')
 
     # ---------------------------------------------
     # Se reemplazan los valores de taller
@@ -575,9 +594,9 @@ def etl_ot():
     # Se resetea el index por los valores eliminados
     df_ot_agua_corr.reset_index(inplace=True, drop=True)
 
-    # Se define el dataframe de ot averia (se usara mas adelante)
-    df_ot_agua_averia = df_ot_agua_corr[['ot', 'chasis', 'carroceria', 'ruedas',
-                                        'mecanica', 'elec, vehiculos']]
+    # # Se define el dataframe de ot averia (se usara mas adelante)
+    # df_ot_agua_averia = df_ot_agua_corr[['ot', 'chasis', 'carroceria', 'ruedas',
+    #                                     'mecanica', 'elec, vehiculos']]
 
     # Se toman las columnas deseadas
     df_ot_agua_corr = df_ot_agua_corr[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
@@ -677,7 +696,10 @@ def etl_ot():
     # ######################################### OT COMPROBAR FECHA #########################################
 
     # Se elimina la fila cuya ot es ultima_ot y fecha es ultima_fecha
-    df_ot_union = df_ot_union.drop(df_ot_union[(df_ot_union['fecha_inicio'] == ultima_fecha) & (df_ot_union['ot'].isin(ot_ultima_fecha))].index)
+    df_ot_union = df_ot_union.drop(df_ot_union[(df_ot_union['fecha_inicio'] == ultima_fecha_agua_corr) & (df_ot_union['ot'].isin(ot_ultima_fecha))].index)
+    df_ot_union = df_ot_union.drop(df_ot_union[(df_ot_union['fecha_inicio'] == ultima_fecha_agua_prev) & (df_ot_union['ot'].isin(ot_ultima_fecha))].index)
+    df_ot_union = df_ot_union.drop(df_ot_union[(df_ot_union['fecha_inicio'] == ultima_fecha_alimentos_corr) & (df_ot_union['ot'].isin(ot_ultima_fecha))].index)
+    df_ot_union = df_ot_union.drop(df_ot_union[(df_ot_union['fecha_inicio'] == ultima_fecha_alimentos_prev) & (df_ot_union['ot'].isin(ot_ultima_fecha))].index)
 
     # Ordenar por fecha
     df_ot_union = df_ot_union.sort_values(by='fecha_inicio')
@@ -714,8 +736,11 @@ def etl_ot():
     # ######################################### OT AVERIA ALIMENTO #########################################
 
     # Se crea la lista de averias
-    df_tipo_averia = df_averia.drop('id_averia', axis=1)
-    df_tipo_averia['averia'] = df_tipo_averia['averia'].str.lower()
+    # df_tipo_averia = df_averia.drop('id_averia', axis=1)
+    # df_tipo_averia['averia'] = df_tipo_averia['averia'].str.lower()
+    df_tipo_averia = pd.DataFrame({'averia': ['chasis', 'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos',
+                                              'obra civil', 'agua y combustible', 'herramientas', 'informatica',
+                                              'exteriores', 'aire', 'maquinaria', 'electricidad']})
 
     # ------------------ Quitar averias ---------------------------
     # Creamos una lista con los repuesto a quitar
@@ -751,47 +776,96 @@ def etl_ot():
     df_ot_averia['id_ot'] = df_ot_averia['id_ot'].astype(int)
 
     # Merge averia
-    df_ot_averia = pd.merge(df_ot_averia, df_averia, how='left', on='averia')
+    df_ot_averia = pd.merge(df_ot_averia, df_averia.loc[:, ['id_averia', 'averia']], how='left', on='averia')
     # Se elimina la columna averia
     df_ot_averia = df_ot_averia.drop('averia', axis=1)
 
     # ######################################### OT AVERIA AGUA #########################################
-    # Se crea la lista de averias
-    df_tipo_averia_agua = df_averia.drop('id_averia', axis=1)
-    df_tipo_averia_agua['averia'] = df_tipo_averia_agua['averia'].str.lower()
 
-    # ------------------ Quitar averias ---------------------------
-    # Creamos una lista con los repuesto a quitar
-    nombres_a_quitar_agua = ['electricidad', 'agua y combustible', 'aire', 'exteriores', 'herramientas',
-                             'informatica', 'maquinaria', 'obra civil']
-    # Seleccionamos las filas que contienen los nombres a eliminar
-    filas_a_eliminar_agua = df_tipo_averia_agua.loc[df_tipo_averia_agua['averia'].isin(nombres_a_quitar_agua)]
-    # Eliminamos las filas seleccionadas
-    df_tipo_averia_agua = df_tipo_averia_agua.drop(filas_a_eliminar_agua.index)
-    # -------------------------------------------------
+    # ---------------------------------------- INFORME ----------------------------------------
 
-    averias_agua = df_tipo_averia_agua['averia'].tolist()
+    hoja_agua_informe = 'Base de datos Correctiva INFORM'
+    sheet_agua_informe = busqueda_hoja(file_agua, hoja_agua_informe)
 
     # Se crea la tabla con el ot y las averias
-    df_otc_averia_agua = df_ot_agua_averia.rename(columns={'NºOTC': 'ot'}).dropna(subset='ot')
+    df_informe_averia_agua = pd.read_excel(
+        file_agua,
+        sheet_name=sheet_agua_informe,
+        usecols='A, H, K:BT',
+        parse_dates=['Fecha entrada'],
+        header=0
+    )
+
+    # Se cambia el nombre de la columna por 'ot'
+    df_informe_averia_agua = df_informe_averia_agua.rename(columns={'Fecha entrada': 'fecha_inicio'})
+
+    # Seleccionar las filas que tienen fecha igual o posterior a la fecha de referencia
+    df_informe_averia_agua = df_informe_averia_agua.loc[df_informe_averia_agua['fecha_inicio'] >= ultima_fecha_agua_corr]
+
+    # ###################################### OT COMPROBAR FECHA ######################################
+
+    # Se elimina la fila cuya ot es ultima_ot y fecha es ultima_fecha
+    df_informe_averia_agua = df_informe_averia_agua.drop(df_informe_averia_agua[(df_informe_averia_agua['fecha_inicio'] == ultima_fecha_agua_corr) & (df_informe_averia_agua['NºOTC'].isin(ot_ultima_fecha))].index)
+
+    df_otc_averia_agua = df_informe_averia_agua.drop('fecha_inicio', axis=1)
+
+    # Se cambia el nombre de la columna por 'ot'
+    df_otc_averia_agua = df_otc_averia_agua.rename(columns={'NºOTC': 'ot'})
+    # Se pasan las columnas a minusculas
+    df_otc_averia_agua.columns = df_otc_averia_agua.columns.str.lower()
+
+    # Se eliminan las filas con valores nan en todas las columnas
+    df_otc_averia_agua.dropna(how='all', inplace=True)
+    # Se eliminan las filas que no tienen ot
+    df_otc_averia_agua.dropna(subset=['ot'], inplace=True)
+
+    # Se crea la lista de averias
+    df_tipo_averia_agua = df_otc_averia_agua.drop('ot', axis=1)
+    averias_agua = df_tipo_averia_agua.columns.tolist()
 
     # Se juntan e invierten columnas
     df_ot_agua_averia = pd.melt(
         df_otc_averia_agua,
         id_vars='ot',
         value_vars=averias_agua
-    ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'averia'})
+    ).loc[:, ['ot', 'variable']].rename(columns={'variable': 'averia'})
 
     # Se limpian los datos
+    df_ot_agua_averia['ot'] = df_ot_agua_averia['ot'].astype(int).astype(str)
+    df_ot_agua_averia = df_ot_agua_averia.replace({'averia': {'electrica': 'elec, vehiculos'}})
     df_ot_agua_averia['averia'] = columnas_texto(df_ot_agua_averia['averia'], 'capitalize')
+
+
+    # ELIMINAR SI ESTA BIEN EL INFORME
+    # # ------------------ Quitar averias ---------------------------
+    # # Creamos una lista con los repuesto a quitar
+    # nombres_a_quitar_agua = ['electricidad', 'agua y combustible', 'aire', 'exteriores', 'herramientas',
+    #                          'informatica', 'maquinaria', 'obra civil']
+    # # Seleccionamos las filas que contienen los nombres a eliminar
+    # filas_a_eliminar_agua = df_tipo_averia_agua.loc[df_tipo_averia_agua['averia'].isin(nombres_a_quitar_agua)]
+    # # Eliminamos las filas seleccionadas
+    # df_tipo_averia_agua = df_tipo_averia_agua.drop(filas_a_eliminar_agua.index)
+    # # -------------------------------------------------
+    # averias_agua = df_tipo_averia_agua['averia'].tolist()
+    # Se crea la tabla con el ot y las averias
+    #df_otc_averia_agua = df_ot_agua_averia.rename(columns={'NºOTC': 'ot'}).dropna(subset='ot')
+    # # Se juntan e invierten columnas
+    # df_ot_agua_averia = pd.melt(
+    #     df_otc_averia_agua,
+    #     id_vars='ot',
+    #     value_vars=averias_agua
+    # ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'averia'})
+
+    # # Se limpian los datos
+    # df_ot_agua_averia['averia'] = columnas_texto(df_ot_agua_averia['averia'], 'capitalize')
 
     # Merge ot
     df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_ot_noalimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
     # Se elimina la columna ot
-    df_ot_agua_averia = df_ot_agua_averia.drop('ot', axis=1)
+    #df_ot_agua_averia = df_ot_agua_averia.drop('ot', axis=1)
 
     # Merge averia
-    df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_averia, how='left', on='averia')
+    df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_averia.loc[:, ['id_averia', 'averia']], how='left', on='averia')
     # Se elimina la columna averia
     df_ot_agua_averia = df_ot_agua_averia.drop('averia', axis=1)
 
@@ -902,9 +976,9 @@ def etl_ot():
 
     session = Session(engine)
 
-    df_ot_union.to_sql('tbl_ot', con=engine, if_exists='append', index=False)
-    df_ot_averia_union.to_sql('tbl_ot_averia', con=engine, if_exists='append', index=False)
-    df_ot_repuesto_union.to_sql('tbl_ot_repuesto', con=engine, if_exists='append', index=False)
+    # df_ot_union.to_sql('tbl_ot', con=engine, if_exists='append', index=False)
+    # df_ot_averia_union.to_sql('tbl_ot_averia', con=engine, if_exists='append', index=False)
+    # df_ot_repuesto_union.to_sql('tbl_ot_repuesto', con=engine, if_exists='append', index=False)
 
     session.close()
 
