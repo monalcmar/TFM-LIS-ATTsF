@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 # =========== Modulos propios ===========
 import dependencies as dp
 from db.connection import engine
-from utils.functions import check_relations, update_db_table, capitalize_df
+from utils.functions import check_relations, update_db_table, columnas_texto
 from models.model import Tipo_ot
 from models.model import Frecuencia
 from models.model import Tipo_taller
@@ -50,7 +50,7 @@ def etl_maestros():
     df_averia = pd.read_excel(
         path_input / 'maestros.xlsx',
         sheet_name='averia',
-        usecols='A:B'
+        usecols='A:C'
     )
     df_repuesto = pd.read_excel(
         path_input / 'maestros.xlsx',
@@ -98,8 +98,8 @@ def etl_maestros():
     # ==========================================================================
     # capitalize_df()
     # ==========================================================================
-    df_averia = capitalize_df(df_averia)
-    df_repuesto = capitalize_df(df_repuesto)
+    df_averia['averia'] = columnas_texto(df_averia['averia'], 'capitalize')
+    df_repuesto['repuesto'] = columnas_texto(df_repuesto['repuesto'], 'capitalize')
 
     # ==========================================================================
     # Cambiar NaN por None
