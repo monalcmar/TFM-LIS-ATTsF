@@ -9,8 +9,5 @@ etl_maestros()
 etl_ot()
 
 # etl distribucion
-<<<<<<< HEAD
-# etl_distribucion()
-=======
 etl_distribucion()
 >>>>>>> eced5f00222d2698e57cdda4f9a25b8e859f1011
