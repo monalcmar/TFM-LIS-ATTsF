@@ -862,7 +862,11 @@ def etl_ot():
     # Merge ot
     df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_ot_noalimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
     # Se elimina la columna ot
-    #df_ot_agua_averia = df_ot_agua_averia.drop('ot', axis=1)
+    df_ot_agua_averia = df_ot_agua_averia.drop('ot', axis=1)
+
+    # id_ot que no tienen ot asociada
+    df_ot_agua_averia.dropna(subset='id_ot', inplace=True)
+    df_ot_agua_averia['id_ot'] = df_ot_agua_averia['id_ot'].astype(int)
 
     # Merge averia
     df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_averia.loc[:, ['id_averia', 'averia']], how='left', on='averia')
@@ -958,6 +962,10 @@ def etl_ot():
     # Se elimina la columna ot
     df_ot_agua_repuesto = df_ot_agua_repuesto.drop('ot', axis=1)
 
+    # id_ot que no tienen ot asociada
+    df_ot_agua_repuesto.dropna(subset='id_ot', inplace=True)
+    df_ot_agua_repuesto['id_ot'] = df_ot_agua_repuesto['id_ot'].astype(int)
+
     # Merge repuesto
     df_ot_agua_repuesto = pd.merge(df_ot_agua_repuesto, df_repuesto.loc[:, ['id_repuesto', 'repuesto']], how='left', on='repuesto')
     # Se elimina la columna repuesto
@@ -976,9 +984,9 @@ def etl_ot():
 
     session = Session(engine)
 
-    # df_ot_union.to_sql('tbl_ot', con=engine, if_exists='append', index=False)
-    # df_ot_averia_union.to_sql('tbl_ot_averia', con=engine, if_exists='append', index=False)
-    # df_ot_repuesto_union.to_sql('tbl_ot_repuesto', con=engine, if_exists='append', index=False)
+    df_ot_union.to_sql('tbl_ot', con=engine, if_exists='append', index=False)
+    df_ot_averia_union.to_sql('tbl_ot_averia', con=engine, if_exists='append', index=False)
+    df_ot_repuesto_union.to_sql('tbl_ot_repuesto', con=engine, if_exists='append', index=False)
 
     session.close()
 
