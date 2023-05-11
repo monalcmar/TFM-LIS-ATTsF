@@ -47,9 +47,6 @@ def etl_ot():
     df_camion = pd.read_sql(session.query(Camion).statement, conn)
     df_wilaya = pd.read_sql(session.query(Wilaya).statement, conn)
 
-    # Obtener la ultima fecha, el ultimo id_ot y los ots que tienen la ultima fecha
-    # ultima_fecha = session.query(Ot.fecha_inicio).filter(Ot.fecha_inicio != None).order_by(Ot.fecha_inicio.desc()).first()[0]
-
     # Se obtiene la ultima id_ot de la base de datos
     ultima_id_ot = session.query(Ot.id_ot).order_by(Ot.id_ot.desc()).first()[0]
     # Se obtienen los camiones de alimentos
@@ -552,13 +549,6 @@ def etl_ot():
 
     df_ot_agua_corr['observacion'] = columnas_texto(df_ot_agua_corr['observacion'], 'capitalize')
 
-    # columnas_averias = ['chasis', 'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos']
-    # df_ot_agua_corr['chasis'] = pasar_a_int(df_ot_agua_corr, 'chasis')
-    # df_ot_agua_corr['carroceria'] = pasar_a_int(df_ot_agua_corr, 'carroceria')
-    # df_ot_agua_corr['ruedas'] = pasar_a_int(df_ot_agua_corr, 'ruedas')
-    # df_ot_agua_corr['mecanica'] = pasar_a_int(df_ot_agua_corr, 'mecanica')
-    # df_ot_agua_corr['elec, vehiculos'] = pasar_a_int(df_ot_agua_corr, 'elec, vehiculos')
-
     # ---------------------------------------------
     # Se reemplazan los valores de taller
     df_ot_agua_corr = df_ot_agua_corr.replace({'taller': {'ATC RABUNI': 'CLM', 'TR AAIUN': 'Aaiun',
@@ -593,10 +583,6 @@ def etl_ot():
 
     # Se resetea el index por los valores eliminados
     df_ot_agua_corr.reset_index(inplace=True, drop=True)
-
-    # # Se define el dataframe de ot averia (se usara mas adelante)
-    # df_ot_agua_averia = df_ot_agua_corr[['ot', 'chasis', 'carroceria', 'ruedas',
-    #                                     'mecanica', 'elec, vehiculos']]
 
     # Se toman las columnas deseadas
     df_ot_agua_corr = df_ot_agua_corr[['ot', 'camion', 'tipo_ot', 'frecuencia', 'taller',
@@ -736,8 +722,6 @@ def etl_ot():
     # ######################################### OT AVERIA ALIMENTO #########################################
 
     # Se crea la lista de averias
-    # df_tipo_averia = df_averia.drop('id_averia', axis=1)
-    # df_tipo_averia['averia'] = df_tipo_averia['averia'].str.lower()
     df_tipo_averia = pd.DataFrame({'averia': ['chasis', 'carroceria', 'ruedas', 'mecanica', 'elec, vehiculos',
                                               'obra civil', 'agua y combustible', 'herramientas', 'informatica',
                                               'exteriores', 'aire', 'maquinaria', 'electricidad']})
@@ -834,30 +818,6 @@ def etl_ot():
     df_ot_agua_averia['ot'] = df_ot_agua_averia['ot'].astype(int).astype(str)
     df_ot_agua_averia = df_ot_agua_averia.replace({'averia': {'electrica': 'elec, vehiculos'}})
     df_ot_agua_averia['averia'] = columnas_texto(df_ot_agua_averia['averia'], 'capitalize')
-
-
-    # ELIMINAR SI ESTA BIEN EL INFORME
-    # # ------------------ Quitar averias ---------------------------
-    # # Creamos una lista con los repuesto a quitar
-    # nombres_a_quitar_agua = ['electricidad', 'agua y combustible', 'aire', 'exteriores', 'herramientas',
-    #                          'informatica', 'maquinaria', 'obra civil']
-    # # Seleccionamos las filas que contienen los nombres a eliminar
-    # filas_a_eliminar_agua = df_tipo_averia_agua.loc[df_tipo_averia_agua['averia'].isin(nombres_a_quitar_agua)]
-    # # Eliminamos las filas seleccionadas
-    # df_tipo_averia_agua = df_tipo_averia_agua.drop(filas_a_eliminar_agua.index)
-    # # -------------------------------------------------
-    # averias_agua = df_tipo_averia_agua['averia'].tolist()
-    # Se crea la tabla con el ot y las averias
-    #df_otc_averia_agua = df_ot_agua_averia.rename(columns={'NºOTC': 'ot'}).dropna(subset='ot')
-    # # Se juntan e invierten columnas
-    # df_ot_agua_averia = pd.melt(
-    #     df_otc_averia_agua,
-    #     id_vars='ot',
-    #     value_vars=averias_agua
-    # ).dropna(subset='value').loc[:, ['ot', 'variable']].rename(columns={'variable': 'averia'})
-
-    # # Se limpian los datos
-    # df_ot_agua_averia['averia'] = columnas_texto(df_ot_agua_averia['averia'], 'capitalize')
 
     # Merge ot
     df_ot_agua_averia = pd.merge(df_ot_agua_averia, df_ot_noalimento.loc[:, ['id_ot', 'ot']], how='left', on='ot')
